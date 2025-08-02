@@ -46,7 +46,7 @@ function Home() {
     <>
       <h1 style={{ textAlign: "center" }}>Welcome to My Spending App</h1>
 
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width="95%" height={400}>
         <LineChart
           data={formattedTransactions}
           margin={{
@@ -105,8 +105,8 @@ function Home() {
             //Value currency -> onChange currency
             style={{ marginLeft: "5px" }}
           > 
-            <option value="USD">USD</option>
             <option value="CAD">CAD</option>
+            <option value="USD">USD</option>
             <option value="EUR">EUR</option>
           </select>
         </label>
