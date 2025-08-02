@@ -61,11 +61,17 @@ public class SpendingServiceImplementation implements SpendingService {
       formattedSpendingData.add(tmpMap);
     }
 
-/*    formattedSpendingData.sort(
-      Comparator.comparing(o -> LocalDateTime.parse((String) o.get("startDate"))
-      )
-    );*/
+    // TODO: Fill missing dates in the selected range with 0 totals (for complete charts)
+    // formattedSpendingData = fillMissingDates(formattedSpendingData, totalAmountMap, from, to, frame);
+
+    formattedSpendingData.sort(Comparator.comparing(o -> (String) o.get("startDate")));
 
     return formattedSpendingData;
+  }
+
+  //Go through the range by day, month, or year, and add missing dates with 0 as total.
+  private void fillMissingDates(List<Map<String, Object>> list, Map<LocalDate, Float> totals,
+                                LocalDate from, LocalDate to, String frame) {
+    // To be implemented
   }
 }
