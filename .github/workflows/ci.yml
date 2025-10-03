@@ -1,0 +1,42 @@
+name: CI - Build & Test   # Name of the workflow, will appear in GitHub Actions tab
+
+on:
+  push:                   # Trigger when code is pushed
+    branches: [ "main" ]  # Only run on main branch
+  pull_request:           # Trigger also when a PR targets main
+    branches: [ "main" ]
+
+jobs:
+  build-backend:                    #Job ID
+    name: Build & Test Backend      #Display name in Actions UI
+    runs-on: ubuntu-latest          #Use the latest Ubuntu runner provided by GitHub
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3   #Downloads the content of your repository into the runner
+
+      - name: Set up JDK 17         #Installs Java 17 (Temurin distribution) on the runner
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'        
+
+      - name: Cache Gradle packages #Speeds up builds by caching Gradle dependencies between runs
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+        
+
+      - name: Make Gradle wrapper executable    #Ensures the Gradle wrapper script has execute permissions
+        run: chmod +x ./gradlew
+        working-directory: server
+        
+
+      - name: Build with Gradle                 #Builds the backend project and runs tests inside the server directory
+        run: ./gradlew build --no-daemon
+        working-directory: server
