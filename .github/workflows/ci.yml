@@ -40,3 +40,25 @@ jobs:
       - name: Build with Gradle                 #Builds the backend project and runs tests inside the server directory
         run: ./gradlew build --no-daemon
         working-directory: server
+
+
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest            #Run job on latest Ubuntu runner
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3     #Get the project code
+
+      - name: Set up Node.js          #Install Node.js version 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies    #Install React project dependencies
+        run: npm install
+        working-directory: client
+
+      - name: Build frontend          #Run React build to check that it compiles correctly
+        run: npm run build
+        working-directory: client

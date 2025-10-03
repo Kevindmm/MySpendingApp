@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import {
   LineChart,
   CartesianGrid,
@@ -16,17 +16,17 @@ function Home() {
   const [frame, setFrame] = useState("daily");
   const [range, setRange] = useState(6);
 
-  const fetchChartData = async () => {
+  const fetchChartData = useCallback(async () => {
     try {
       const { data } = await axios.get(`/api/spendings`, {
-  params: { frame, range },
-});
+        params: { frame, range },
+      });
 
       setSpendings(data.spendings);
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [frame, range]);
 
   const formattedTransactions = useMemo(
     () =>
@@ -40,7 +40,7 @@ function Home() {
 
   useEffect(() => {
     fetchChartData();
-  }, [frame, range]);
+  }, [fetchChartData]);
 
   return (
     <>
