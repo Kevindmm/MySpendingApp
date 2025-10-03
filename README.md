@@ -1,8 +1,41 @@
-# Spending App Challenge
+# MySpendingApp
 
-Thanks for your interest in joining our team. The purpose of this challenge is to replicate a real-world working environment and to test a diverse set of skills, to see how you would work with us on our team. The challenge itself is similar to the work you would be doing on our team.
+**MySpendingApp** is a lightweight web application to track spending over time with support for multiple currencies.  
+It provides a simple backend API built with **Spring Boot** and a frontend dashboard built with **React**, making it easy to visualize financial data in real-time.
 
-Below is some high level detail about the project. Good luck!
+## 🚀 Features
+
+- Track and visualize spending trends over time.
+- Filter results by day, month, or year.
+- Multi-currency support (e.g., CAD, EUR, USD).
+- Sort spending data by start date.
+- Group spending automatically by date range.
+- Easy integration with third-party APIs for currency exchange rates (planned).
+
+## 📌 Roadmap – MySpendingApp (Java 17)
+
+**✅ Already Done**
+- **Basic Filters & Grouping**: Implemented grouping by day, month, and year using `LocalDate` in Java 17.
+- **Multi-Currency Support (CAD, EUR, USD)**: Added dropdown and logic for different currencies.
+- **Sorting by Start Date**: Spending data sorted with modern Java Streams and Comparator APIs.
+- **GitHub Actions CI**: Set up workflows to build and test both backend and frontend automatically.
+
+---
+
+**🔄 In Progress**
+- **GitHub Pages Deployment**: Configure automatic deployment of the React frontend to GitHub Pages after successful builds.
+- **DTO Refactor with Records**: Gradually replacing old DTO classes with Java 17 `record` types for immutability and cleaner JSON mapping.
+
+---
+
+**📝 Planned**
+- **Switch Expressions**: Refactoring legacy `switch` statements to use modern `switch ->` expressions, especially in filters and grouping logic.
+- **Pattern Matching for instanceof**: Starting to simplify some casting code in validation and mapping layers.
+- **Sealed Classes**: Define a sealed hierarchy for `Spending` types (Daily, Monthly, Yearly) to make aggregation logic more explicit and safe.
+- **Text Blocks**: Adopt text blocks (`"""`) for longer SQL queries and seed data to improve readability.
+- **Enhanced Random Generators**: Use `RandomGeneratorFactory` for generating seed data in testing scenarios.
+- **Better Documentation**: Add technical notes in the README about which Java 17 features are used and why.
+
 
 ## Language & Tools
 
