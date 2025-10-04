@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/mySpendingApp/static/css/main.93a0497a.css",
-    "main.js": "/mySpendingApp/static/js/main.1800f1e8.js",
-    "static/js/787.c4e7f8f9.chunk.js": "/mySpendingApp/static/js/787.c4e7f8f9.chunk.js",
-    "index.html": "/mySpendingApp/index.html",
-    "main.93a0497a.css.map": "/mySpendingApp/static/css/main.93a0497a.css.map",
-    "main.1800f1e8.js.map": "/mySpendingApp/static/js/main.1800f1e8.js.map",
-    "787.c4e7f8f9.chunk.js.map": "/mySpendingApp/static/js/787.c4e7f8f9.chunk.js.map"
+    "main.css": "/MySpendingApp/static/css/main.93a0497a.css",
+    "main.js": "/MySpendingApp/static/js/main.95cda9d7.js",
+    "static/js/787.c4e7f8f9.chunk.js": "/MySpendingApp/static/js/787.c4e7f8f9.chunk.js",
+    "index.html": "/MySpendingApp/index.html",
+    "main.93a0497a.css.map": "/MySpendingApp/static/css/main.93a0497a.css.map",
+    "main.95cda9d7.js.map": "/MySpendingApp/static/js/main.95cda9d7.js.map",
+    "787.c4e7f8f9.chunk.js.map": "/MySpendingApp/static/js/787.c4e7f8f9.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.93a0497a.css",
-    "static/js/main.1800f1e8.js"
+    "static/js/main.95cda9d7.js"
   ]
 }
