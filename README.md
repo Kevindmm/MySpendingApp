@@ -1,41 +1,75 @@
 # MySpendingApp
 
-**MySpendingApp** is a lightweight web application to track spending over time with support for multiple currencies.  
-It provides a simple backend API built with **Spring Boot** and a frontend dashboard built with **React**, making it easy to visualize financial data in real-time.
-
-## 🚀 Features
-
-- Track and visualize spending trends over time.
-- Filter results by day, month, or year.
-- Multi-currency support (e.g., CAD, EUR, USD).
-- Sort spending data by start date.
-- Group spending automatically by date range.
-- Easy integration with third-party APIs for currency exchange rates (planned).
-
-## 📌 Roadmap – MySpendingApp (Java 17)
-
-**✅ Already Done**
-- **Basic Filters & Grouping**: Implemented grouping by day, month, and year using `LocalDate` in Java 17.
-- **Multi-Currency Support (CAD, EUR, USD)**: Added dropdown and logic for different currencies.
-- **Sorting by Start Date**: Spending data sorted with modern Java Streams and Comparator APIs.
-- **GitHub Actions CI**: Set up workflows to build and test both backend and frontend automatically.
+**MySpendingApp** is a lightweight personal finance tracker built with **Java 17** and **Spring Boot**.\
+The goal is to create a clear and maintainable backend while showcasing modern Java 17 features in a practical way.
 
 ---
 
-**🔄 In Progress**
-- **GitHub Pages Deployment**: Configure automatic deployment of the React frontend to GitHub Pages after successful builds.
-- **DTO Refactor with Records**: Gradually replacing old DTO classes with Java 17 `record` types for immutability and cleaner JSON mapping.
+## 🚀 Development Roadmap
+
+| Phase | Purpose | Status            |
+|-------|---------|-------------------|
+| **Phase 0 – Setup** | Project scaffold, health check, CI | ✍️ Working on it! |
+| **Phase 1 – MVP (Spending CRUD)** | First usable backend with Java 17 essentials | ⬜ Planned         |
+| **Phase 2 – Modernization** | Replace remaining legacy constructs with Java 17 features | ⬜ Planned         |
+| **Phase 3 – Enhancements** | Currency API, reports, dashboards, test-data tools | ⬜ Planned         |
+
+
+
+### ✍️ Phase 0 — Setup (Working on it!)
+
+- Spring Boot skeleton + Gradle build ✅
+- `/actuator/health` returns **UP** ✅
+- GitHub Actions workflow (build + test badge) ✅
+- Local DB baseline: **SQLite** (dev) / **H2** (tests) ✍️ Working on it!
+- Quick filters & sorting (date, category) using `LocalDate` + Streams
+- Seed data + smoke tests
+
+
+
+### ⬜ Phase 1 — MVP (Spending CRUD)
+
+**Goal:** deliver core CRUD + summary endpoints using Java 17 records and Streams.
+
+| Item | Detail |
+|------|--------|
+| **Entity** | `Spending` (`id`, `amount`, `currency`, `category`, `type`, `date`) |
+| **Endpoints** | `POST /api/v1/spendings` · `GET /api/v1/spendings` · `GET /api/v1/spendings/summary` |
+| **Persistence** | SQLite (prod dev) / H2 (tests) |
+| **Key Java 17** | Records (`SpendingRequest`, `SpendingResponse`) · `Stream.toList()` · `var` · Jakarta Validation |
+
+
+
+#### Task Checklist
+- [x] Bootstrap project
+- [ ] Spending entity
+- [ ] Record DTOs
+- [ ] Repository (`JpaRepository<Spending, Long>`)
+- [ ] Service (`create`, `findAll`, `summary`)
+- [ ] REST controller + MockMvc tests
+- [ ] Validation on DTOs
+- [ ] SQLite config (`ddl-auto=update`)
+- [ ] Integration tests (happy path)
+
+
+
+### 🕓 Phase 2 — Modernization (planned)
+
+- Switch expressions & pattern matching in business logic
+- Sealed hierarchy for `SpendingType` (`INCOME` / `EXPENSE`)
+- Replace remaining POJOs with records where safe
+- Modular package refactor & clearer domain boundaries
+
+
+
+### 🕓 Phase 3 — Enhancements (planned)
+
+- Currency-rate integration & automatic conversion
+- CSV import / export, advanced reports, minimal dashboard
+- Random test-data generators (`RandomGeneratorFactory`)
+- Observability (metrics, tracing) and deployment hardening
 
 ---
-
-**📝 Planned**
-- **Switch Expressions**: Refactoring legacy `switch` statements to use modern `switch ->` expressions, especially in filters and grouping logic.
-- **Pattern Matching for instanceof**: Starting to simplify some casting code in validation and mapping layers.
-- **Sealed Classes**: Define a sealed hierarchy for `Spending` types (Daily, Monthly, Yearly) to make aggregation logic more explicit and safe.
-- **Text Blocks**: Adopt text blocks (`"""`) for longer SQL queries and seed data to improve readability.
-- **Enhanced Random Generators**: Use `RandomGeneratorFactory` for generating seed data in testing scenarios.
-- **Better Documentation**: Add technical notes in the README about which Java 17 features are used and why.
-
 
 ## Language & Tools
 
@@ -43,6 +77,8 @@ It provides a simple backend API built with **Spring Boot** and a frontend dashb
 - [Gradle](https://gradle.org/) - as a package manager
 - [Spring Boot](https://spring.io/projects/spring-boot) - as a server-side framework
 - [React](https://reactjs.org/) - client-side framework
+
+---
 
 ## Quickstart
 
@@ -53,6 +89,8 @@ This section contains all the information required for getting the server up and
 
 In order to run the application, you will need to have both the server and client running in separate terminals.
 
+---
+
 ### Server
 
 To run the server, follow these steps:
@@ -62,6 +100,8 @@ To run the server, follow these steps:
 2. Install the required dependencies by running `gradle build` or `gradlew build` if you're in Windows.
 
 3. Start the server. `gradle bootRun` or `gradlew bootRun` - launches the Tomcat Server in debug mode on port 8080.
+
+---
 
 ### Client
 
@@ -86,6 +126,8 @@ You can ignore the severity vulnerabilities, this is a [known issue](https://git
 npm start
 ```
 
+---
+
 ## Formatting Client
 
 To format your code using [prettier](https://prettier.io/), follow these steps:
@@ -100,6 +142,8 @@ npm run lint
 
 To ensure you are using the correct version of prettier, make sure to format your code after installing the dependencies (`npm install`).
 
+---
+
 ## Database and Seed Data
 
 **Note: No database setup should be required to get started with running the project.**
@@ -108,8 +152,13 @@ This project uses SQLite, which stores your tables inside a file (`server/databa
 
 The database is seeding from the `data.sql` file everytime the application is running. The data is seeded relative to today's date.
 
+---
+
 ## Verify That Everything Is Set Up Correctly
 
 To verify that the frontend is working properly, go to [http://localhost:3000](http://localhost:3000). You should see the homepage that is titled "Welcome to My Spending App" and a chart as below.
 
-![Starting Screen](docs/mySpendingApp.png)
+![Starting Screen](https://storage.googleapis.com/m.hatchways.io/SpendingApp-screenshot.png)
+
+---
+
