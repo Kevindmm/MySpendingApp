@@ -42,7 +42,7 @@ The goal is to create a clear and maintainable backend while showcasing modern J
 | Phase 0 – Setup | Skeleton, CI, Docker, health-check | ✅ Done |
 | Phase 1 – Data Model | Finalise production-ready schema (users, categories, transactions, import batches) on SQLite/H2; seed demo data | ✍️ In progress |
 | Phase 2 – MVP (Spending CRUD) | Implement login + JWT and full spending CRUD on top of the mature DB | ⬜ Planned |
-| Phase 3 – Modernisation | Replace legacy constructs with Java 17+ features; introduce records, sealed classes, virtual threads | ⬜ Planned |
+| Phase 3 – Modernisation | Replace legacy constructs with Java 17+ features; introduce records, sealed classes | ⬜ Planned |
 | Phase 4 – Enhancements | FX API integration, dashboards, reporting, test-data tools | ⬜ Planned |
 
 
@@ -62,7 +62,7 @@ The goal is to create a clear and maintainable backend while showcasing modern J
 *Goal: lock down a production-ready schema<—>users, categories, transactions and preload demo data so later phases can 
 focus on business logic and UI.*
 
-- [ ] **P1.1**  Update README with schema diagram + DB-evolution log
+- [x] **P1.1**  Add README with schema diagram + [DB-evolution](docs/DB-evolution.md) log
 - [ ] **P1.2**  User entity & repository
 - [ ] **P1.3**  Category entity (per-user)
 - [ ] **P1.4**  Extend Transaction with `user_id`, `category_id`, `note`
@@ -203,7 +203,7 @@ The database is seeding from the `data.sql` file everytime the application is ru
 
 To verify that the frontend is working properly, go to [http://localhost:3000](http://localhost:3000). You should see the homepage that is titled "Welcome to My Spending App" and a chart as below.
 
-![Starting Screen](https://storage.googleapis.com/m.hatchways.io/SpendingApp-screenshot.png)
+![Starting Screen](docs/mySpendingApp.png)
 
 ---
 
