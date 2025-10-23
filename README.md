@@ -5,6 +5,36 @@ The goal is to create a clear and maintainable backend while showcasing modern J
 
 ---
 
+## MVP · v0.1
+
+- **Record transactions**  
+  Add, edit, and delete expenses or income entries with date, amount, category, and optional note.
+
+- **Transaction list with filters**  
+  Chronological table with sorting, pagination, and quick filters by date range and category.
+
+- **Monthly summary**  
+  Totals for expenses, income, and balance—compact overview of where the money goes.
+
+- **Minimal categories + CRUD**  
+  Seed set (Food, Transport, Leisure, etc.) with endpoints to add or rename categories.
+
+- **Lightweight persistence**  
+  SQLite for development, H2 for tests; schema auto-generated at backend startup.
+
+- **REST API v1**  
+  `/transactions` and `/categories` endpoints (GET, POST, PUT, DELETE) returning clean JSON.
+
+- **React frontend (SPA)**  
+  Single page with “Add transaction” form, transaction table, and summary section.
+
+- **Smoke tests & CI**  
+  Minimal seed data plus a couple of API smoke tests running in GitHub Actions.
+
+
+---
+
+
 ## 🚀 Development Roadmap
 
 | Phase | Purpose | Status            |
