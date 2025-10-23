@@ -37,30 +37,42 @@ The goal is to create a clear and maintainable backend while showcasing modern J
 
 ## 🚀 Development Roadmap
 
-| Phase | Purpose | Status            |
-|-------|---------|-------------------|
-| **Phase 0 – Setup** | Project scaffold, health check, CI | ✍️ Working on it! |
-| **Phase 1 – MVP (Spending CRUD)** | First usable backend with Java 17 essentials | ⬜ Planned         |
-| **Phase 2 – Modernization** | Replace remaining legacy constructs with Java 17 features | ⬜ Planned         |
-| **Phase 3 – Enhancements** | Currency API, reports, dashboards, test-data tools | ⬜ Planned         |
+| Phase | Purpose | Status |
+|-------|---------|--------|
+| Phase 0 – Setup | Skeleton, CI, Docker, health-check | ✅ Done |
+| Phase 1 – Data Model | Finalise production-ready schema (users, categories, transactions, import batches) on SQLite/H2; seed demo data | ✍️ In progress |
+| Phase 2 – MVP (Spending CRUD) | Implement login + JWT and full spending CRUD on top of the mature DB | ⬜ Planned |
+| Phase 3 – Modernisation | Replace legacy constructs with Java 17+ features; introduce records, sealed classes, virtual threads | ⬜ Planned |
+| Phase 4 – Enhancements | FX API integration, dashboards, reporting, test-data tools | ⬜ Planned |
 
 
 
-### ✍️ Phase 0 — Setup (Working on it!)
+### ✅ Phase 0 — Setup (Completed!)
+*Goal: bring the project to life locally with CI, health-check, logging, and a working Docker stack.*
 
-- Spring Boot skeleton + Gradle build -P0.1✅
-- `/actuator/health` endpoint exposed and **healthy** -P0.2✅
-- GitHub Actions workflow (build + tests badge) -P0.3✅
-- Dockerised stack: **backend (JDK 17 + SQLite) & frontend (React + Nginx) run via `docker compose`** -P0.4✅
-- Fix persistent logging: logs now land in /app/logs -P0.5✅
-- Local DB baseline: **SQLite** (dev) / **H2** (tests) -P0.6✍️ Working on it!
-- Quick filters & sorting (date, category) using `LocalDate` + Streams -P0.7
-- Seed data + smoke tests -P0.8
+- [x] **P0.1**  Spring Boot skeleton + Gradle build
+- [x] **P0.2**  `/actuator/health` endpoint exposed and healthy
+- [x] **P0.3**  GitHub Actions workflow (build + tests badge)
+- [x] **P0.4**  Dockerised stack: backend (JDK 17 + SQLite) & frontend (React + Nginx) via `docker compose`
+- [x] **P0.5**  Fix persistent logging: logs now land in `/app/logs`
 
 
 
-### ⬜ Phase 1 — MVP (Spending CRUD)
+### ✍️ Phase 1 — Data Model (Working on it!)
+*Goal: lock down a production-ready schema<—>users, categories, transactions and preload demo data so later phases can 
+focus on business logic and UI.*
 
+- [ ] **P1.1**  Update README with schema diagram + DB-evolution log
+- [ ] **P1.2**  User entity & repository
+- [ ] **P1.3**  Category entity (per-user)
+- [ ] **P1.4**  Extend Transaction with `user_id`, `category_id`, `note`
+- [ ] **P1.5**  Enable `ddl-auto=update` for dev / test profiles
+- [ ] **P1.6**  Seed demo user and default categories
+- [ ] **P1.7**  H2 integration tests for User & Transaction repos
+
+
+
+### ⬜ Phase 2 — MVP (Spending CRUD) !!Needs clarification!!
 **Goal:** deliver core CRUD + summary endpoints using Java 17 records and Streams.
 
 | Item | Detail |
@@ -72,7 +84,6 @@ The goal is to create a clear and maintainable backend while showcasing modern J
 
 
 
-#### Task Checklist
 - [x] Bootstrap project
 - [ ] Spending entity
 - [ ] Record DTOs
@@ -82,10 +93,11 @@ The goal is to create a clear and maintainable backend while showcasing modern J
 - [ ] Validation on DTOs
 - [ ] SQLite config (`ddl-auto=update`)
 - [ ] Integration tests (happy path)
+- P2.1 – Quick filters & sorting (LocalDate + Streams)
 
 
 
-### 🕓 Phase 2 — Modernization (planned)
+### 🕓 Phase 3 — Modernization (planned) !!Needs clarification!!
 
 - Switch expressions & pattern matching in business logic
 - Sealed hierarchy for `SpendingType` (`INCOME` / `EXPENSE`)
@@ -94,9 +106,10 @@ The goal is to create a clear and maintainable backend while showcasing modern J
 
 
 
-### 🕓 Phase 3 — Enhancements (planned)
+### 🕓 Phase 4 — Enhancements (planned) !!Needs clarification!!
 
 - Currency-rate integration & automatic conversion
+- [ ] **P1.5**  ImportBatch entity & FK from Transaction
 - CSV import / export, advanced reports, minimal dashboard
 - Random test-data generators (`RandomGeneratorFactory`)
 - Observability (metrics, tracing) and deployment hardening
