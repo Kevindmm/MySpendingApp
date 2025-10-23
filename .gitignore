@@ -1,4 +1,80 @@
-# misc
+# ------------------------------
+# 🌐 General OS files
+# ------------------------------
 .DS_Store
-.idea
+Thumbs.db
+
+# ------------------------------
+# IDE metadata
+# ------------------------------
+.idea/
 .vscode/
+*.iml
+
+# ------------------------------
+# Logs
+# ------------------------------
+logs/
+*.log
+
+# ------------------------------
+# Databases (SQLite, H2, etc.)
+# ------------------------------
+data/*.db
+
+# ------------------------------
+# Java & Gradle build outputs
+# ------------------------------
+/build/
+.gradle/
+out/
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# ------------------------------
+# Node / React artefacts
+# ------------------------------
+node_modules/
+client/node_modules/
+frontend/node_modules/
+
+# Production bundles
+client/build/
+frontend/build/
+/dist/
+/build/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ------------------------------
+# Environment & secrets
+# ------------------------------
+.env
+.env.*.local
+*.env
+
+# ------------------------------
+# Docker ancillary files
+# ------------------------------
+!docker-compose.yml
+
+docker-compose.override.yml
+docker-compose.*.yml
+
+# ------------------------------
+# Coverage & reports
+# ------------------------------
+coverage/
+*.lcov
+reports/
+
+# ------------------------------
+# Misc workspace artifacts
+# ------------------------------
+.settings/
+bin/
