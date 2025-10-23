@@ -19,8 +19,10 @@ The goal is to create a clear and maintainable backend while showcasing modern J
 ### ✍️ Phase 0 — Setup (Working on it!)
 
 - Spring Boot skeleton + Gradle build ✅
-- `/actuator/health` returns **UP** ✅
-- GitHub Actions workflow (build + test badge) ✅
+- `/actuator/health` endpoint exposed and **healthy** ✅
+- GitHub Actions workflow (build + tests badge) ✅
+- Dockerised stack: **backend (JDK 17 + SQLite) & frontend (React + Nginx) run via `docker compose`** ✅
+- Fix persistent logging: mount `./logs → /app/logs` and set `logging.file.path=/app/logs` ✍️ Working on it!
 - Local DB baseline: **SQLite** (dev) / **H2** (tests) ✍️ Working on it!
 - Quick filters & sorting (date, category) using `LocalDate` + Streams
 - Seed data + smoke tests

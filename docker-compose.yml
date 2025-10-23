@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./server          # Dockerfile lives in /server
+    container_name: mySpendingApp-backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data         # SQLite database file
+      - ./logs:/app/logs         # Spring Boot log files
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./client          # Dockerfile lives in /client
+    container_name: mySpendingApp-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend                  # wait for API container

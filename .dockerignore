@@ -1,0 +1,35 @@
+# --- universal junk -------------------------------------------------
+.git
+.gitignore
+README.md
+LICENSE
+*.md
+*.log
+
+# --- IDEs -----------------------------------------------------------
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+
+# --- Java / Gradle --------------------------------------------------
+**/build/
+**/.gradle/
+**/out/
+.gradle/
+build/
+
+# --- Node / React ---------------------------------------------------
+client/node_modules/
+client/.npm/
+client/.cache/
+client/*.env
+client/dist/
+client/build/
+
+# --- Docker nesting -------------------------------------------------
+# Don’t send other images or volumes
+data/
+logs/
