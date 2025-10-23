@@ -32,3 +32,15 @@ Right now the big milestone is the Phase 2 MVP: getting the core tables finished
 ## 2️⃣ Schema for the MVP (end of Phase 2)
 
 ![DB Schema](SchemaDB_Phase1.png)
+
+
+### Conventions
+
+* **Primary keys** – `UUID` stored as `CHAR(36)` (uppercase v4).  
+  Rationale: readable in logs, cross-DB compatible, avoids numeric enumeration.
+
+* **Foreign keys** – also `CHAR(36)` UUID, `NOT NULL` unless explicitly optional.
+
+* **Created / Updated timestamps** – `TIMESTAMP` with default `CURRENT_TIMESTAMP`; updated via trigger or Hibernate annotation.
+
+Any future change (e.g. switch to ULID or binary UUID) must be documented here and back-migrated.

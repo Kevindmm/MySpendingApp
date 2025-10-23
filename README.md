@@ -63,7 +63,7 @@ The goal is to create a clear and maintainable backend while showcasing modern J
 focus on business logic and UI.*
 
 - [x] **P1.1**  Add README with schema diagram + [DB-evolution](docs/DB-evolution.md) log
-- [ ] **P1.2**  User entity & repository
+- [x] **P1.2**  User entity & repository
 - [ ] **P1.3**  Category entity (per-user)
 - [ ] **P1.4**  Extend Transaction with `user_id`, `category_id`, `note`
 - [ ] **P1.5**  Enable `ddl-auto=update` for dev / test profiles
