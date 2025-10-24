@@ -65,10 +65,10 @@ focus on business logic and UI.*
 - [x] **P1.1**  Add README with schema diagram + [DB-evolution](docs/DB-evolution.md) log
 - [x] **P1.2**  User entity & repository
 - [x] **P1.3**  Category entity (per-user)
-- [ ] **P1.4**  Extend Transaction with `user_id`, `category_id`, `note`
-- [ ] **P1.5**  Enable `ddl-auto=update` for dev / test profiles
-- [ ] **P1.6**  Seed demo user and default categories
-- [ ] **P1.7**  H2 integration tests for User & Transaction repos
+- [x] **P1.4** Setup dev/test environments, added H2 in-memory DB, test profile & Gradle/Docker test config
+- [ ] **P1.5** Extend Transaction with `user_id`, `category_id`, `note`
+- [ ] **P1.6** Seed demo user and default categories
+- [ ] **P1.7** H2 integration tests for User & Transaction repos
 
 
 

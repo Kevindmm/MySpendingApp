@@ -1,3 +1,9 @@
+# Stage: run tests
+FROM gradle:8.6.0-jdk17-alpine AS test
+WORKDIR /workspace
+COPY . .
+RUN ./gradlew test --no-daemon
+
 # ---------- build stage ----------
 FROM gradle:8.6.0-jdk17-alpine AS build
 WORKDIR /workspace
@@ -14,7 +20,7 @@ COPY --from=build /workspace/build/libs/*.jar app.jar
 
 # Persist SQLite file outside the container
 VOLUME /app/data
-ENV SPRING_DATASOURCE_URL=jdbc:sqlite:/app/data/mySpendingApp.db
+#ENV SPRING_DATASOURCE_URL=jdbc:sqlite:/app/data/mySpendingApp.db
 
 # Persist application logs outside the container
 VOLUME /app/logs
