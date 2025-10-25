@@ -129,48 +129,77 @@ focus on business logic and UI.*
 
 ## Quickstart
 
-This section contains all the information required for getting the server up and running. The application contains the following two directories:
+This section contains all the information required for getting the app up and running. The application contains the following two directories:
 
-- [server/](server/) - the server directory that contains the server code
-- [client/](client/) - the client directory that contains the client code
+- [server/](server/) - the backend (Java 17 + Spring Boot)
+- [client/](client/) - the frontend (React)
 
-In order to run the application, you will need to have both the server and client running in separate terminals.
-
----
-
-### Server
-
-To run the server, follow these steps:
-
-1. Navigate to the server directory (in Unix that would be `cd server`)
-
-2. Install the required dependencies by running `gradle build` or `gradlew build` if you're in Windows.
-
-3. Start the server. `gradle bootRun` or `gradlew bootRun` - launches the Tomcat Server in debug mode on port 8080.
+You can run the stack with Docker (recommended) or run server/client locally in separate terminals.
 
 ---
 
-### Client
+### Docker (recommended)
+
+To run the stack with Docker, follow these steps:
+
+1. From the repo root, build and start the services:
+
+```bash
+  docker compose up --build -d
+```
+
+2. Check the backend:
+  - Health: [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
+  - Logs (persisted): `./logs/mySpendingApp.log`
+  - SQLite DB (persisted): `./data/mySpendingApp.db`
+
+3. Open the frontend: [http://localhost:3000](http://localhost:3000)
+
+4. Stop everything:
+
+```bash
+  docker compose down
+```
+
+---
+
+### Server (local)
+
+To run the server locally (without Docker), follow these steps:
+
+1. Navigate to the server directory (`cd server`)
+
+2. Install/build dependencies:
+  - Unix/macOS: `./gradlew build`
+  - Windows: `.\gradlew build`
+
+3. Start the server (Tomcat on port 8080):
+  - Unix/macOS: `./gradlew bootRun`
+  - Windows: `.\gradlew bootRun`
+
+---
+
+### Client (local)
 
 - System requirements
   - NodeJS v18
 
-To run the client, follow these steps:
+To run the client locally, follow these steps:
 
-1. Navigate to the client directory (in Unix that would be `cd client`)
+1. Navigate to the client directory (`cd client`)
 
-2. Install dependencies
+2. Install dependencies:
 
 ```bash
-npm install
+  npm install
 ```
 
-You can ignore the severity vulnerabilities, this is a [known issue](https://github.com/facebook/create-react-app/issues/11174) related to `create-react-app` and are not real vulnerabilities.
+You can ignore the severity vulnerabilities, this is a [known issue](https://github.com/facebook/create-react-app/issues/11174) related to `create-react-app` and not actual vulnerabilities for this setup.
 
-3. Start the client
+3. Start the client:
 
 ```bash
-npm start
+  npm start
 ```
 
 ---
@@ -179,12 +208,12 @@ npm start
 
 To format your code using [prettier](https://prettier.io/), follow these steps:
 
-1. Navigate to the client directory (in Unix that would be `cd client`)
+1. Navigate to the client directory (`cd client`)
 
 2. Run this command:
 
 ```bash
-npm run lint
+  npm run lint
 ```
 
 To ensure you are using the correct version of prettier, make sure to format your code after installing the dependencies (`npm install`).
@@ -193,17 +222,19 @@ To ensure you are using the correct version of prettier, make sure to format you
 
 ## Database and Seed Data
 
-**Note: No database setup should be required to get started with running the project.**
+**Note: No manual database setup is required to get started.**
 
-This project uses SQLite, which stores your tables inside a file (`server/database.db`) for development. You can inspect the seed data by looking into the (`server/src/main/resources`) folder in the main package.
+- **Dev (Docker/local)**: the backend uses SQLite, persisted to `./data/mySpendingApp.db` (volume-mounted in Docker). Logs are written to `./logs/mySpendingApp.log`. Data persists across restarts.
+- **Seed data**: if the database file is new/empty, Spring may execute `data.sql` on startup to insert demo data. If the DB already exists, existing data is kept and the seed won't reapply.
+- **Tests**: run on H2 in-memory via a dedicated `application-test.properties` and do not touch the SQLite file.
 
-The database is seeding from the `data.sql` file everytime the application is running. The data is seeded relative to today's date.
+Seed files live under `server/src/main/resources/`.
 
 ---
 
 ## Verify That Everything Is Set Up Correctly
 
-To verify that the frontend is working properly, go to [http://localhost:3000](http://localhost:3000). You should see the homepage that is titled "Welcome to My Spending App" and a chart as below.
+To verify that the frontend is working properly, go to [http://localhost:3000](http://localhost:3000). You should see the homepage titled "Welcome to MySpendingApp" and a chart as below.
 
 ![Starting Screen](docs/mySpendingApp.png)
 
