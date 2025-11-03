@@ -29,8 +29,6 @@ public class UserCategoryTransactionRepoTest {
     @Autowired
     private TransactionRepository transRepo;
 
-
-
     @BeforeAll
     static void before(@Autowired Environment env) {
         System.out.println("activeProfiles=" + Arrays.toString(env.getActiveProfiles()));

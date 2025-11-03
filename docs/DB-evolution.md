@@ -1,6 +1,6 @@
 # Database Schema Evolution
 
-This document tracks how the data model evolves: what changed, why it changed, and how it impacts persistence across environments (dev vs test). It’s the single source of truth for schema decisions.
+This document tracks how the data model evolves: what changed, why it changed, and how it impacts persistence across environments (dev vs test). It's the single source of truth for schema decisions.
 
 ---
 
@@ -19,31 +19,74 @@ This document tracks how the data model evolves: what changed, why it changed, a
 
 ---
 
-## 1️⃣ Phase 1 – Model hardening
+## 1️⃣ Phase 1 – Model hardening (Users, Categories, Transactions)
 
-### 1. Users
-- Table: `users` — `id (UUID PK)`, `email`, `password_hash`, `name`, `created_at`.
-- Rationale: foundation for authentication (later JWT) and data ownership.
-- Uniqueness: enforced at application level on SQLite (DB-level UNIQUE will be enforced on a production RDBMS).
+### **P1.1** – Schema baseline documentation
+- **What**: Created this evolution log and initial ER diagram.
+- **Why**: Establish single source of truth for schema decisions before making structural changes.
 
-### 2. Categories
-- Table: `categories` — `id (UUID PK)`, `name`, `color`, `user_id (FK → users.id)`.
-- Constraint: **UK(`user_id`, `name`)** to prevent duplicate names per user.
-- Rationale: per-user taxonomy to group spending.
+---
 
-### 3. Transactions (refined)
-- `id` migrated to **UUID**.
-- Added FKs: `user_id (FK → users.id)`, `category_id (FK → categories.id)`.
-- Optional: `note` (short free text).
-- Rationale: link each transaction to an owner and a category for meaningful queries and reports.
+### **P1.2** – User entity & repository
+- **What**: Added `users` table with UUID primary key.
+- **Columns**: `id (UUID PK)`, `email`, `password_hash`, `name`, `last_name`, `created_at`.
+- **Constraints**: Email uniqueness enforced at application level (SQLite limitation); will use DB-level UNIQUE in production RDBMS.
+- **Repository**: `UserRepository` with `findByEmail(String email)` for authentication lookup.
+- **Why**: Foundation for user authentication and data ownership. Each transaction and category will belong to a specific user.
 
-### 4. Repositories (query surface)
-- `UserRepository`: `findByEmail(String email)` as the natural lookup key.
-- `TransactionRepository`:
-  - `findByUserId(UUID userId)`
-  - `findByUserIdAndCategoryId(UUID userId, UUID categoryId)`
-  - `getTransactionsForRange(String startDate, String endDate)` *(native)* — supports time-range charts.
-  - Optional JPQL: `findByUserEmail(String email)` using a Java 17 text block.
+---
+
+### **P1.3** – Category entity (per-user)
+- **What**: Added `categories` table with UUID primary key.
+- **Columns**: `id (UUID PK)`, `name`, `color`, `user_id (FK → users.id)`, `created_at`.
+- **Constraints**: 
+  - **UK(user_id, name)** prevents duplicate category names per user.
+  - `user_id` is NOT NULL (every category must belong to a user).
+- **Relationship**: `@ManyToOne` from Category to User.
+- **Why**: Users need to organize their spending with custom categories. The unique constraint ensures clean data (no "Food" twice for the same user).
+
+---
+
+### **P1.4** – Dev/Test environment separation
+- **What**: Configured H2 in-memory database for tests via `application-test.properties`.
+- **Test config**:
+  - `spring.datasource.url=jdbc:h2:mem:testdb`
+  - `spring.jpa.database-platform=org.hibernate.dialect.H2Dialect`
+  - `spring.sql.init.mode=never` (no prod seed data in tests)
+- **Dev config**: Remains on SQLite with `ddl-auto=update`.
+- **Why**: Isolate test runs from production data. H2 is fast and resets after each test, preventing side effects.
+
+---
+
+### **P1.5** – Transaction relationships & note field
+- **What**: Migrated `transactions.id` to UUID and added foreign keys.
+- **Changes**:
+  - `id`: Changed from auto-increment to **UUID** for consistency.
+  - `user_id (FK → users.id)`: Links each transaction to its owner (NOT NULL).
+  - `category_id (FK → categories.id)`: Links transaction to a category (NOT NULL).
+  - `note (TEXT)`: Optional free-text field for transaction details.
+- **Relationships**: `@ManyToOne(fetch = FetchType.LAZY)` to User and Category.
+- **Repository queries**:
+  - `findByUserId(UUID userId)`: All transactions for a user.
+  - `findByUserIdAndCategoryId(UUID userId, UUID categoryId)`: Filter by category.
+  - `getTransactionsForRange(String startDate, String endDate)`: Time-range queries for charts.
+- **Why**: 
+  - UUIDs provide cross-database compatibility and avoid collision in distributed scenarios.
+  - Foreign keys ensure data integrity (can't have orphaned transactions).
+  - The note field adds context without overcomplicating the schema.
+  - Lazy fetching prevents N+1 queries when loading transactions.
+
+---
+
+### P1.6 — Mark conversion as deprecated
+- **Status**: Table retained temporarily for frontend chart demo.
+- **Rationale**:
+  - Frontend currently displays conversion data in chart component.
+  - No User/Category/Transaction data in UI yet (Phase 2).
+- **Plan**:
+  - Remove in Phase 4 when FX rates API is integrated.
+  - Will be replaced with real transaction analytics (by category, date range).
+- **Code**: Added `@Deprecated` annotation to `Conversion.java`.
 
 ---
 
@@ -66,9 +109,17 @@ This document tracks how the data model evolves: what changed, why it changed, a
 
 ## Current ER snapshot (Phase 1, pre-MVP)
 
-- **users** (UUID PK)
-- **categories** (UUID PK) → FK to **users**; **UK(user_id, name)**
-- **transactions** (UUID PK) → FKs to **users**, **categories**; optional `note`
+```
+users (UUID PK)
+  ├── categories (UUID PK, FK user_id, UK(user_id, name))
+  └── transactions (UUID PK, FK user_id, FK category_id)
+```
+
+**Key points**:
+- All entities use UUID primary keys.
+- Foreign keys enforce referential integrity.
+- Per-user category uniqueness prevents duplicates.
+- Optional `note` field on transactions for user context.
 
 This is the base that Phase 2 (MVP) will build on (CRUD, auth, charts).
 
@@ -84,16 +135,11 @@ This is the base that Phase 2 (MVP) will build on (CRUD, auth, charts).
 
 ---
 
-## Next schema touches (DB-only)
-- Seed: demo user + default categories aligned with the refined FKs.
-- Repo tests (H2): cover `User`, `Category`, `Transaction` relations and range queries.
-- CSV import batches: deferred to a later phase; will add `import_batches` and link to `transactions`.
-- FX rates: revisit or remove `conversion` table based on Phase 2+ requirements.
-- Production RDBMS: plan migration from SQLite to PostgreSQL or MySQL for production deployment.
-- Data migration scripts: if switching RDBMS, plan for data export/import and schema migration scripts.
-- Indexing: analyze query patterns and add indexes on frequently queried columns (e.g., `user_id`, `category_id`, `date`).
-- Audit logging: consider adding audit tables or triggers to track changes to critical data (e.g., transactions).
-- Backup strategy: define a backup and recovery strategy for production databases.
-- Performance tuning: monitor and optimize database performance as the application scales.
-- Security enhancements: implement encryption for sensitive data and ensure compliance with data protection regulations.
-- Documentation updates: keep the schema documentation up-to-date with any changes made during development.
+
+## Future considerations
+
+- **Import batches**: Add `import_batches` table when CSV import feature arrives (Phase 4).
+- **FX rates**: Revisit `conversion` table design when currency features are implemented.
+- **Production RDBMS**: Plan migration from SQLite to PostgreSQL.
+- **Indexing**: Add indexes on `user_id`, `category_id`, `date` based on query patterns.
+- **Audit logging**: Consider audit tables for transaction history tracking.

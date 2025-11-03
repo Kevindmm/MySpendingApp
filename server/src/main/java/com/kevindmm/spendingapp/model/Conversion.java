@@ -9,6 +9,12 @@ import javax.persistence.Column;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+/**
+ * @deprecated Temporary entity for frontend chart demo.
+ * Will be removed in Phase 4 when FX rates integration is implemented.
+ * See DB-evolution.md § P1.6 for rationale.
+ */
+@Deprecated
 @Entity
 @Table(name = "conversion")
 public class Conversion {
