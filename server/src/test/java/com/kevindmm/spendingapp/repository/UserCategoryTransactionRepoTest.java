@@ -58,6 +58,7 @@ public class UserCategoryTransactionRepoTest {
         tx.setAmount(42.50f);
         tx.setCurrency("EUR");
         tx.setDate(LocalDate.now());
+        tx.setNote("Weekly shopping");
         tx.setUser(user);
         tx.setCategory(category);
         transRepo.save(tx);
@@ -70,5 +71,6 @@ public class UserCategoryTransactionRepoTest {
         assertThat(found.get(0).getAmount()).isEqualTo(42.50f);
         assertThat(found.get(0).getUser().getEmail()).isEqualTo("test@example.com");
         assertThat(found.get(0).getCategory().getName()).isEqualTo("Groceries");
+        assertThat(found.get(0).getNote()).isEqualTo("Weekly shopping");
     }
 }

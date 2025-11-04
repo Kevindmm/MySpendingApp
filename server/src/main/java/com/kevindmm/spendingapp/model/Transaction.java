@@ -37,6 +37,10 @@ public class Transaction {
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
+    //P1.7 add `note` field to Transaction entity for optional free-text details
+    @Column(name = "note", length = 255)
+    private String note;
+
     //P1.5 User and Category relationships
     @ManyToOne(fetch = FetchType.LAZY) //FK to User
     @JoinColumn(name = "user_id", nullable = false)
@@ -89,6 +93,13 @@ public class Transaction {
 
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public String getNote() {
+        return note;
+    }
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public User getUser() {

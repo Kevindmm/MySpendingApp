@@ -78,15 +78,18 @@ This document tracks how the data model evolves: what changed, why it changed, a
 
 ---
 
-### P1.6 — Mark conversion as deprecated
-- **Status**: Table retained temporarily for frontend chart demo.
-- **Rationale**:
-  - Frontend currently displays conversion data in chart component.
-  - No User/Category/Transaction data in UI yet (Phase 2).
-- **Plan**:
-  - Remove in Phase 4 when FX rates API is integrated.
-  - Will be replaced with real transaction analytics (by category, date range).
-- **Code**: Added `@Deprecated` annotation to `Conversion.java`.
+### P1.6 — Mark `conversion` as deprecated
+- **Status**: Retained for frontend chart demo.
+- **Rationale**: Frontend displays conversion data; no User/Category/Transaction in UI yet (Phase 2).
+- **Plan**: Remove in Phase 4 (FX API integration).
+- **Code**: Added `@Deprecated` to `Conversion.java`.
+
+---
+
+### P1.7 — Add `note` to Transaction
+- **What**: Optional `note (TEXT)` column.
+- **Why**: Allows user context ("Dinner with friends") without schema complexity.
+- **Code**: `@Column(name = "note", length = 255) private String note;` and updated tests.
 
 ---
 

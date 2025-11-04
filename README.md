@@ -40,7 +40,7 @@ The goal is to create a clear and maintainable backend while showcasing modern J
 | Phase | Purpose | Status |
 |-------|---------|--------|
 | Phase 0 – Setup | Skeleton, CI, Docker, health-check | ✅ Done |
-| Phase 1 – Data Model | Finalise production-ready schema (users, categories, transactions, import batches) on SQLite/H2; seed demo data | ✍️ In progress |
+| Phase 1 – Data Model | Finalise production-ready schema (users, categories, transactions) on SQLite/H2; seed demo data | ✍️ In progress |
 | Phase 2 – MVP (Spending CRUD) | Implement login + JWT and full spending CRUD on top of the mature DB | ⬜ Planned |
 | Phase 3 – Modernisation | Replace legacy constructs with Java 17+ features; introduce records, sealed classes | ⬜ Planned |
 | Phase 4 – Enhancements | FX API integration, dashboards, reporting, test-data tools | ⬜ Planned |
@@ -68,8 +68,9 @@ focus on business logic and UI.*
 - [x] **P1.4** Setup dev/test environments, added H2 in-memory DB, test profile & Gradle/Docker test config
 - [X] **P1.5** Extend Transaction with `user_id`, `category_id`, `note`
 - [x] **P1.6** Mark `conversion` as deprecated (retained for frontend chart; removed/refined in Phase 4)
-- [ ] **P1.7** Update `schema.sql` & `data.sql` with UUIDs + seed demo user & categories
-- [ ] **P1.8** H2 integration tests for User & Transaction repos
+- [x] **P1.7** add `note` field to Transaction entity for optional free-text details
+- [ ] **P1.8** Update `schema.sql` & `data.sql` with UUIDs + seed demo user & categories
+- [ ] **P1.9** H2 integration tests for User & Transaction repos
 
 
 
