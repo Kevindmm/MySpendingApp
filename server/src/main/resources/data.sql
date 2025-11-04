@@ -1,3 +1,30 @@
+-- ========================================
+-- PHASE 1.9: MVP seed data
+-- ========================================
+
+-- Users (passwords: "admin123" y "john123" en BCrypt $10)
+INSERT INTO users (id, email, name, last_name, password_hash, created_at) VALUES
+('550e8400-e29b-41d4-a716-446655440000', 'admin@example.com', 'Admin', 'User', '$2a$10$N9qo8uLOickgx2ZMRZoMy.8g3LjQxZG5p7pT8LUmtA5dF0WqK0Fwy', datetime('now')),
+('660e8400-e29b-41d4-a716-446655440001', 'john.doe@example.com', 'John', 'Doe', '$2a$10$e0MYzXyjpJS7Pd0RVvHwHe1VCYnlhBqT1r8p6cDK8Zm2L8d0YFe1u', datetime('now'));
+
+-- Categories (per user, respeta UK user_id+name)
+INSERT INTO categories (id, name, color, user_id) VALUES
+('c1111111-1111-1111-1111-111111111111', 'Food', '#FF5733', '550e8400-e29b-41d4-a716-446655440000'),
+('c2222222-2222-2222-2222-222222222222', 'Health', '#33C3FF', '550e8400-e29b-41d4-a716-446655440000'),
+('c3333333-3333-3333-3333-333333333333', 'Transport', '#FFD700', '550e8400-e29b-41d4-a716-446655440000'),
+('c4444444-4444-4444-4444-444444444444', 'Food', '#FF5733', '660e8400-e29b-41d4-a716-446655440001');
+
+-- TransactionsV2 (sin updated_at, solo created_at)
+INSERT INTO transactionsv2 (id, amount, currency, date, note, user_id, category_id, created_at, updated_at) VALUES
+('t1111111-1111-1111-1111-111111111111', 45.50, 'USD', date('now', '-5 days'), 'Grocery shopping', '550e8400-e29b-41d4-a716-446655440000', 'c1111111-1111-1111-1111-111111111111', datetime('now'), datetime('now')),
+('t2222222-2222-2222-2222-222222222222', 120.00, 'EUR', date('now', '-3 days'), 'Monthly gym', '550e8400-e29b-41d4-a716-446655440000', 'c2222222-2222-2222-2222-222222222222', datetime('now'), datetime('now')),
+('t3333333-3333-3333-3333-333333333333', 89.99, 'USD', date('now', '-1 day'), 'Team dinner', '550e8400-e29b-41d4-a716-446655440000', 'c1111111-1111-1111-1111-111111111111', datetime('now'), datetime('now')),
+('t4444444-4444-4444-4444-444444444444', 25.00, 'USD', date('now'), 'Lunch', '660e8400-e29b-41d4-a716-446655440001', 'c4444444-4444-4444-4444-444444444444', datetime('now'), datetime('now'));
+
+
+-- ========================================
+-- PHASE 0, seed data for legacy transactions table
+-- ========================================
 INSERT INTO transactions (id, currency, amount, date, createdAt, updatedAt) VALUES
 (1, 'USD', 212.02, datetime("now", "-3 days"), datetime("now"), datetime("now")),
 (2, 'CAD', 2932.2, datetime("now", "-2 days"), datetime("now"), datetime("now")),

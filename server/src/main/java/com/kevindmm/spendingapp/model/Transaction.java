@@ -18,17 +18,15 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Entity
 @Table(name = "transactions")
 public class Transaction {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "soc_sequence")
+    @SequenceGenerator(name = "soc_sequence", sequenceName = "soc_sequence", initialValue = 1)
     private Long id;
 
     @CreationTimestamp
-    @Column(name = "createdAt", nullable = false, updatable = false)
     private Timestamp createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updatedAt", nullable = false)
     private Timestamp updatedAt;
 
     @Column(name = "amount", nullable = false)
@@ -40,28 +38,28 @@ public class Transaction {
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    public Transaction() {}
+    public Transaction(){}
 
-    public Transaction(Long id, Float amount, String currency, LocalDate date) {
+    public Transaction(Long id, Float amount, String currency, LocalDate transactionDate){
         this.id = id;
         this.amount = amount;
         this.currency = currency;
-        this.date = date;
+        this.date = transactionDate;
     }
 
-    public Long getId() {
+    public Long getId(){
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Long id){
+        this.id=id;
     }
 
-    public Timestamp getCreatedAt() {
+    public Timestamp getCreatedAt(){
         return createdAt;
     }
 
-    public Timestamp getUpdatedAt() {
+    public Timestamp getUpdatedAt(){
         return updatedAt;
     }
 
@@ -89,4 +87,3 @@ public class Transaction {
         this.date = date;
     }
 }
-

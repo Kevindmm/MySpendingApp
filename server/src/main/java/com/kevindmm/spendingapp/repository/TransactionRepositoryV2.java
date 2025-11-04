@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface TransactionRepositoryV2 extends JpaRepository<TransactionV2, UUID> {
     //Using triple quotes for readability in Java17
     @Query("""
-        SELECT t FROM Transaction t
+        SELECT t FROM TransactionV2 t
         JOIN t.user u
         WHERE u.email = ?1
         """)

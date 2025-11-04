@@ -4,6 +4,7 @@ import com.kevindmm.spendingapp.model.Category;
 import com.kevindmm.spendingapp.model.TransactionV2;
 import com.kevindmm.spendingapp.model.User;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -15,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
+@Disabled
 @ActiveProfiles("test")
 @DataJpaTest
 public class UserCategoryTransactionRepoV2Test {

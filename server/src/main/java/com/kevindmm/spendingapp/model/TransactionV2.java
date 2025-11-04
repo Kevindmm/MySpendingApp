@@ -12,7 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 
 @Entity
-@Table(name = "transactions")
+@Table(name = "transactionsv2")
 public class TransactionV2 {
     @Id
     @GeneratedValue(generator = "UUID")

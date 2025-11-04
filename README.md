@@ -70,8 +70,8 @@ focus on business logic and UI.*
 - [x] **P1.6** Mark `conversion` as deprecated (retained for frontend chart; removed/refined in Phase 4)
 - [x] **P1.7** add `note` field to Transaction entity for optional free-text details
 - [x] **P1.8** TransactionV2: main entity with UUID + User/Category FK (MVP entity from P1.9 onwards), Transaction model marked as deprecated, fixed bugs
-- [ ] **P1.9** Update `data.sql` with UUIDs + seed demo user, categories & transactionsv2
-- [ ] **P1.10** H2 integration tests for User & TransactionV2 repos
+- [x] **P1.9** Update `data.sql` with UUIDs + seed demo user, categories & transactionsv2; refactor `application.properties`
+- [ ] **P1.10** H2 integration tests for User, categories & TransactionV2 repos
 
 
 
@@ -146,7 +146,7 @@ To run the stack with Docker, follow these steps:
 1. From the repo root, build and start the services:
 
 ```bash
-  docker compose up --build -d
+  docker compose up --build
 ```
 
 2. Check the backend:
