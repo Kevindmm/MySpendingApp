@@ -26,12 +26,14 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @Column(name = "password_hash", nullable = false, length = 64)
-    private String passwordHash; //BCrypt hash length (60 characters)
-
+    @Column(name = "name", nullable = false)
     private  String name;
 
-    private String lastName;
+    @Column(name = "last_name" )
+    private String last_name;
+
+    @Column(name = "password_hash", nullable = false, length = 64)
+    private String passwordHash; //BCrypt hash length (60 characters)
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -64,13 +66,9 @@ public class User {
     }
 
     public String getLastName() {
-        return lastName;
+        return last_name;
     }
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+    public void setLastName(String last_name) {this.last_name = last_name;}
 
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
+    public Timestamp getCreatedAt() {return createdAt;}
 }

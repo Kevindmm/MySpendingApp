@@ -29,6 +29,7 @@ public class Category {
     @Column(nullable = false, length = 60)
     private String name;
 
+    @Column(name = "color", length = 7) //e.g., #RRGGBB
     private String color;
 
     @ManyToOne(fetch = FetchType.LAZY) //FK to User

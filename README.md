@@ -69,8 +69,9 @@ focus on business logic and UI.*
 - [X] **P1.5** Extend Transaction with `user_id`, `category_id`, `note`
 - [x] **P1.6** Mark `conversion` as deprecated (retained for frontend chart; removed/refined in Phase 4)
 - [x] **P1.7** add `note` field to Transaction entity for optional free-text details
-- [ ] **P1.8** Update `schema.sql` & `data.sql` with UUIDs + seed demo user & categories
-- [ ] **P1.9** H2 integration tests for User & Transaction repos
+- [x] **P1.8** TransactionV2: main entity with UUID + User/Category FK (MVP entity from P1.9 onwards), Transaction model marked as deprecated, fixed bugs
+- [ ] **P1.9** Update `data.sql` with UUIDs + seed demo user, categories & transactionsv2
+- [ ] **P1.10** H2 integration tests for User & TransactionV2 repos
 
 
 

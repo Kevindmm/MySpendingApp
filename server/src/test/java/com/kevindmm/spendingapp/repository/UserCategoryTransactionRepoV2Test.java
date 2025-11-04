@@ -1,7 +1,7 @@
 package com.kevindmm.spendingapp.repository;
 
 import com.kevindmm.spendingapp.model.Category;
-import com.kevindmm.spendingapp.model.Transaction;
+import com.kevindmm.spendingapp.model.TransactionV2;
 import com.kevindmm.spendingapp.model.User;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
 @DataJpaTest
-public class UserCategoryTransactionRepoTest {
+public class UserCategoryTransactionRepoV2Test {
 
     @Autowired
     private UserRepository userRepo;
@@ -27,7 +27,7 @@ public class UserCategoryTransactionRepoTest {
     private CategoryRepository catRepo;
 
     @Autowired
-    private TransactionRepository transRepo;
+    private TransactionRepositoryV2 transRepo;
 
     @BeforeAll
     static void before(@Autowired Environment env) {
@@ -54,7 +54,7 @@ public class UserCategoryTransactionRepoTest {
         catRepo.save(category);
 
         // and: a transaction linked to both
-        Transaction tx = new Transaction();
+        TransactionV2 tx = new TransactionV2();
         tx.setAmount(42.50f);
         tx.setCurrency("EUR");
         tx.setDate(LocalDate.now());
@@ -64,7 +64,7 @@ public class UserCategoryTransactionRepoTest {
         transRepo.save(tx);
 
         // when: fetching by user & category
-        List<Transaction> found = transRepo.findByUserIdAndCategoryId(user.getId(), category.getId());
+        List<TransactionV2> found = transRepo.findByUserIdAndCategoryId(user.getId(), category.getId());
 
         // then: should return the saved transaction
         assertThat(found).hasSize(1);

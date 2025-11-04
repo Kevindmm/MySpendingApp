@@ -2,30 +2,33 @@ package com.kevindmm.spendingapp.model;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.util.UUID;
 
 import javax.persistence.*;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
-
+/**
+ * @deprecated Legacy transaction entity for frontend chart demo.
+ * Maps to old 'transactions' table structure (pre-Phase 1).
+ * Will be removed when frontend migrates to new Transaction entity with User/Category relationships.
+ * See DB-evolution.md § P1.8 for migration plan.
+ */
+@Deprecated
 @Entity
 @Table(name = "transactions")
 public class Transaction {
+
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @CreationTimestamp
+    @Column(name = "createdAt", nullable = false, updatable = false)
     private Timestamp createdAt;
 
     @UpdateTimestamp
+    @Column(name = "updatedAt", nullable = false)
     private Timestamp updatedAt;
 
     @Column(name = "amount", nullable = false)
@@ -37,37 +40,28 @@ public class Transaction {
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    //P1.7 add `note` field to Transaction entity for optional free-text details
-    @Column(name = "note", length = 255)
-    private String note;
+    public Transaction() {}
 
-    //P1.5 User and Category relationships
-    @ManyToOne(fetch = FetchType.LAZY) //FK to User
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY) //FK to Category
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
-
-    public Transaction(){}
-
-    public Transaction(UUID id, Float amount, String currency, LocalDate transactionDate){
+    public Transaction(Long id, Float amount, String currency, LocalDate date) {
         this.id = id;
         this.amount = amount;
         this.currency = currency;
-        this.date = transactionDate;
+        this.date = date;
     }
 
-    public UUID getId(){
+    public Long getId() {
         return id;
     }
 
-    public Timestamp getCreatedAt(){
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public Timestamp getUpdatedAt(){
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
@@ -94,25 +88,5 @@ public class Transaction {
     public void setDate(LocalDate date) {
         this.date = date;
     }
-
-    public String getNote() {
-        return note;
-    }
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public User getUser() {
-        return user;
-    }
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-    public void setCategory(Category category) {
-        this.category = category;
-    }
 }
+
