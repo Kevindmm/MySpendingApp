@@ -1,5 +1,7 @@
 # MySpendingApp
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Kevindmm_MySpendingApp&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Kevindmm_MySpendingApp)
+
 **MySpendingApp** is a lightweight personal finance tracker built with **Java 17** and **Spring Boot**.\
 The goal is to create a clear and maintainable backend while showcasing modern Java 17 features in a practical way.
 
@@ -78,7 +80,7 @@ focus on business logic and UI.*
 ### ✍️ Phase 2 — MVP (MySpendingApp CRUD + JWT)
 *Goal: implement authentication, core spending CRUD, and quality gates on top of the existing `User`, `Category`, and `TransactionV2` entities from Phase 1.*
 
-- [ ] **P2.1** SonarQube integration with GitHub Actions; add quality gate badge to README
+- [x] **P2.1** SonarQube integration with GitHub Actions; add quality gate badge to README
 - [ ] **P2.2** JWT authentication: `AuthController`, `JwtTokenProvider`, `SecurityConfig`; `POST /api/v1/auth/login` endpoint
 - [ ] **P2.3** `TransactionService` layer with `create`, `findAllByUser`, `update`, `delete` methods; DTOs: `TransactionRequest`, `TransactionResponse`, `CategoryResponse`
 - [ ] **P2.4** REST API for TransactionV2: `POST`, `GET`, `PUT`, `DELETE /api/v1/transactions`; JWT-secured endpoints with `@PreAuthorize`
