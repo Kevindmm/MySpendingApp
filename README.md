@@ -37,13 +37,13 @@ The goal is to create a clear and maintainable backend while showcasing modern J
 
 ## 🚀 Development Roadmap
 
-| Phase | Purpose | Status |
-|-------|---------|--------|
-| Phase 0 – Setup | Skeleton, CI, Docker, health-check | ✅ Done |
-| Phase 1 – Data Model | Finalise production-ready schema (users, categories, transactions) on SQLite/H2; seed demo data | ✍️ In progress |
-| Phase 2 – MVP (Spending CRUD) | Implement login + JWT and full spending CRUD on top of the mature DB | ⬜ Planned |
-| Phase 3 – Modernisation | Replace legacy constructs with Java 17+ features; introduce records, sealed classes | ⬜ Planned |
-| Phase 4 – Enhancements | FX API integration, dashboards, reporting, test-data tools | ⬜ Planned |
+| Phase                              | Purpose | Status |
+|------------------------------------|---------|--------|
+| Phase 0 – Setup                    | Skeleton, CI, Docker, health-check | ✅ Done |
+| Phase 1 – Data Model               | Finalise production-ready schema (users, categories, transactions) on SQLite/H2; seed demo data | ✅ Done |
+| Phase 2 – MVP (MySpendingApp CRUD) | Implement login + JWT and full spending CRUD on top of the mature DB | ✍️ In progress |
+| Phase 3 – Modernisation            | Replace legacy constructs with Java 17+ features; introduce records, sealed classes | ⬜ Planned |
+| Phase 4 – Enhancements             | FX API integration, dashboards, reporting, test-data tools | ⬜ Planned |
 
 
 
@@ -58,7 +58,7 @@ The goal is to create a clear and maintainable backend while showcasing modern J
 
 
 
-### ✍️ Phase 1 — Data Model (Working on it!)
+### ✅ Phase 1 — Data Model (Completed!)
 *Goal: lock down a production-ready schema<—>users, categories, transactions and preload demo data so later phases can 
 focus on business logic and UI.*
 
@@ -75,28 +75,23 @@ focus on business logic and UI.*
 
 
 
-### ⬜ Phase 2 — MVP (Spending CRUD) !!Needs clarification!!
-**Goal:** deliver core CRUD + summary endpoints using Java 17 records and Streams.
+### ✍️ Phase 2 — MVP (MySpendingApp CRUD + JWT)
+*Goal: implement authentication, core spending CRUD, and quality gates on top of the existing `User`, `Category`, and `TransactionV2` entities from Phase 1.*
 
-| Item | Detail |
-|------|--------|
-| **Entity** | `Spending` (`id`, `amount`, `currency`, `category`, `type`, `date`) |
-| **Endpoints** | `POST /api/v1/spendings` · `GET /api/v1/spendings` · `GET /api/v1/spendings/summary` |
-| **Persistence** | SQLite (prod dev) / H2 (tests) |
-| **Key Java 17** | Records (`SpendingRequest`, `SpendingResponse`) · `Stream.toList()` · `var` · Jakarta Validation |
+- [ ] **P2.1** SonarQube integration with GitHub Actions; add quality gate badge to README
+- [ ] **P2.2** JWT authentication: `AuthController`, `JwtTokenProvider`, `SecurityConfig`; `POST /api/v1/auth/login` endpoint
+- [ ] **P2.3** `TransactionService` layer with `create`, `findAllByUser`, `update`, `delete` methods; DTOs: `TransactionRequest`, `TransactionResponse`, `CategoryResponse`
+- [ ] **P2.4** REST API for TransactionV2: `POST`, `GET`, `PUT`, `DELETE /api/v1/transactions`; JWT-secured endpoints with `@PreAuthorize`
+- [ ] **P2.5** `CategoryService` + REST API: `POST`, `GET`, `PUT`, `DELETE /api/v1/categories`; prevent deletion if transactions exist
+- [ ] **P2.6** Integration tests for auth + CRUD: login flow, transaction CRUD with JWT, 403 validation
+- [ ] **P2.7** Monthly summary endpoint: `GET /api/v1/transactions/summary?month=YYYY-MM`; use `Stream` API for grouping/totals
+- And more...
 
-
-
-- [ ] Bootstrap project
-- [ ] Spending entity
-- [ ] Record DTOs
-- [ ] Repository (`JpaRepository<Spending, Long>`)
-- [ ] Service (`create`, `findAll`, `summary`)
-- [ ] REST controller + MockMvc tests
-- [ ] Validation on DTOs
-- [ ] SQLite config (`ddl-auto=update`)
-- [ ] Integration tests (happy path)
-- P2.1 – Quick filters & sorting (LocalDate + Streams)
+**Key Java 17 features used:**
+- Records for DTOs (`LoginRequest`, `TransactionRequest`, `TransactionResponse`)
+- `Stream.toList()` for mapping/filtering
+- `var` in service methods
+- Switch expressions in validation logic
 
 
 
@@ -123,7 +118,7 @@ focus on business logic and UI.*
 
 - [JDK17](https://jdk.java.net/archive/)
 - [Gradle](https://gradle.org/) - as a package manager
-- [Spring Boot](https://spring.io/projects/spring-boot) - as a server-side framework
+- [Spring Boot 2.6](https://spring.io/projects/spring-boot) - as a server-side framework
 - [React](https://reactjs.org/) - client-side framework
 
 ---
