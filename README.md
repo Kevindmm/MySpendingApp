@@ -1,6 +1,8 @@
 # MySpendingApp
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Kevindmm_MySpendingApp&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Kevindmm_MySpendingApp)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Kevindmm_MySpendingApp&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Kevindmm_MySpendingApp)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Kevindmm_MySpendingApp&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Kevindmm_MySpendingApp)
 
 **MySpendingApp** is a lightweight personal finance tracker built with **Java 17** and **Spring Boot**.\
 The goal is to create a clear and maintainable backend while showcasing modern Java 17 features in a practical way.
@@ -120,7 +122,7 @@ focus on business logic and UI.*
 
 - [JDK17](https://jdk.java.net/archive/)
 - [Gradle](https://gradle.org/) - as a package manager
-- [Spring Boot 2.6](https://spring.io/projects/spring-boot) - as a server-side framework
+- [Spring Boot](https://spring.io/projects/spring-boot) - as a server-side framework
 - [React](https://reactjs.org/) - client-side framework
 
 ---
@@ -129,7 +131,7 @@ focus on business logic and UI.*
 
 This section contains all the information required for getting the app up and running. The application contains the following two directories:
 
-- [server/](server/) - the backend (Java 17 + Spring Boot)
+- [server/](server/) - the backend (Java 17 + Spring Boot 2.6.6)
 - [client/](client/) - the frontend (React)
 
 You can run the stack with Docker (recommended) or run server/client locally in separate terminals.
