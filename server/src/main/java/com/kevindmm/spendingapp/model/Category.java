@@ -1,6 +1,7 @@
 package com.kevindmm.spendingapp.model;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -10,7 +11,7 @@ import java.util.UUID;
         name = "categories",
         uniqueConstraints = @UniqueConstraint(
                 name = "uk_user_name",
-                columnNames = {"user_id", "name"} //Unique per user
+                columnNames = {"user_id", "name"}
         )
 )
 public class Category {
@@ -20,10 +21,8 @@ public class Category {
             name = "UUID",
             strategy = "org.hibernate.id.UUIDGenerator"
     )
-    @Column(
-            columnDefinition = "CHAR(36)",
-            nullable = false, updatable = false
-    )
+    @Type(type = "org.hibernate.type.UUIDCharType")
+    @Column(columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private UUID id;
 
     @Column(nullable = false, length = 60)
@@ -32,8 +31,8 @@ public class Category {
     @Column(name = "color", length = 7) //e.g., #RRGGBB
     private String color;
 
-    @ManyToOne(fetch = FetchType.LAZY) //FK to User
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "VARCHAR(36)")
     private User user;
 
 

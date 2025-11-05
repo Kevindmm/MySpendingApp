@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -21,6 +22,8 @@ public class User {
             name = "UUID",
             strategy = "org.hibernate.id.UUIDGenerator"
     )
+    @Type(type = "org.hibernate.type.UUIDCharType")
+    @Column(columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private UUID id;
 
     @Column(nullable = false)

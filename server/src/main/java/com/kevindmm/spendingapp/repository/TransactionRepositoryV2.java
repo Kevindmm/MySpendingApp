@@ -5,6 +5,7 @@ import com.kevindmm.spendingapp.model.TransactionV2;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,6 +18,8 @@ public interface TransactionRepositoryV2 extends JpaRepository<TransactionV2, UU
         """)
     List<TransactionV2> findByEmail(String email);
 
+    List<TransactionV2> findByCategoryId(UUID categoryId);
     List<TransactionV2> findByUserId(UUID userId);
     List<TransactionV2> findByUserIdAndCategoryId(UUID userId, UUID categoryId);
+    List<TransactionV2> findByUserIdAndDateBetween(UUID userId, LocalDate startDate, LocalDate endDate);
 }

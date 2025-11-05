@@ -99,6 +99,24 @@ No auth/ownership yet.
 
 ---
 
+### P1.9 – Update `data.sql` with UUIDs + seed demo user, categories & transactionsv2
+- **What**: Migrated `data.sql` to use UUID primary keys and added seed data for demo user, categories, and transactions.
+- **Why**: Provide realistic demo data for frontend development and enable environment-specific configurations.
+
+---
+
+### P1.10 – H2 integration tests + UUID VARCHAR(36) migration
+- **What**:
+  - Added `@Type(type = "org.hibernate.type.UUIDCharType")` to UUID fields in `User`, `Category`, and `TransactionV2`.
+  - Created `data-h2.sql` seed file for H2 test environment (separate from SQLite `data.sql`).
+  - 27 integration tests for `UserRepository`, `CategoryRepository`, and `TransactionRepositoryV2`.
+- **Why**: H2 was converting UUIDs to hexadecimal during queries, causing mismatches. Forcing `VARCHAR(36)` mapping fixed compatibility.
+- **Result**: UUIDs now persist and query correctly as `VARCHAR(36)` in both H2 and SQLite.
+
+
+---
+
+
 ## Environments
 
 ### Dev (SQLite)

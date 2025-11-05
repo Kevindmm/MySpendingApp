@@ -1,21 +1,21 @@
 -- ========================================
--- PHASE 1.9: MVP seed data
+-- PHASE 1.9: MVP seed data (SQLite)
 -- ========================================
 
 -- Users (passwords: "admin123" y "john123" en BCrypt $10)
-INSERT INTO users (id, email, name, last_name, password_hash, created_at) VALUES
+INSERT OR IGNORE INTO users (id, email, name, last_name, password_hash, created_at) VALUES
 ('550e8400-e29b-41d4-a716-446655440000', 'admin@example.com', 'Admin', 'User', '$2a$10$N9qo8uLOickgx2ZMRZoMy.8g3LjQxZG5p7pT8LUmtA5dF0WqK0Fwy', datetime('now')),
 ('660e8400-e29b-41d4-a716-446655440001', 'john.doe@example.com', 'John', 'Doe', '$2a$10$e0MYzXyjpJS7Pd0RVvHwHe1VCYnlhBqT1r8p6cDK8Zm2L8d0YFe1u', datetime('now'));
 
 -- Categories (per user, respeta UK user_id+name)
-INSERT INTO categories (id, name, color, user_id) VALUES
+INSERT OR IGNORE INTO categories (id, name, color, user_id) VALUES
 ('c1111111-1111-1111-1111-111111111111', 'Food', '#FF5733', '550e8400-e29b-41d4-a716-446655440000'),
 ('c2222222-2222-2222-2222-222222222222', 'Health', '#33C3FF', '550e8400-e29b-41d4-a716-446655440000'),
 ('c3333333-3333-3333-3333-333333333333', 'Transport', '#FFD700', '550e8400-e29b-41d4-a716-446655440000'),
 ('c4444444-4444-4444-4444-444444444444', 'Food', '#FF5733', '660e8400-e29b-41d4-a716-446655440001');
 
--- TransactionsV2 (sin updated_at, solo created_at)
-INSERT INTO transactionsv2 (id, amount, currency, date, note, user_id, category_id, created_at, updated_at) VALUES
+-- TransactionsV2
+INSERT OR IGNORE INTO transactionsv2 (id, amount, currency, date, note, user_id, category_id, created_at, updated_at) VALUES
 ('t1111111-1111-1111-1111-111111111111', 45.50, 'USD', date('now', '-5 days'), 'Grocery shopping', '550e8400-e29b-41d4-a716-446655440000', 'c1111111-1111-1111-1111-111111111111', datetime('now'), datetime('now')),
 ('t2222222-2222-2222-2222-222222222222', 120.00, 'EUR', date('now', '-3 days'), 'Monthly gym', '550e8400-e29b-41d4-a716-446655440000', 'c2222222-2222-2222-2222-222222222222', datetime('now'), datetime('now')),
 ('t3333333-3333-3333-3333-333333333333', 89.99, 'USD', date('now', '-1 day'), 'Team dinner', '550e8400-e29b-41d4-a716-446655440000', 'c1111111-1111-1111-1111-111111111111', datetime('now'), datetime('now')),
@@ -25,45 +25,113 @@ INSERT INTO transactionsv2 (id, amount, currency, date, note, user_id, category_
 -- ========================================
 -- PHASE 0, seed data for legacy transactions table
 -- ========================================
-INSERT INTO transactions (id, currency, amount, date, createdAt, updatedAt) VALUES
-(1, 'USD', 212.02, datetime("now", "-3 days"), datetime("now"), datetime("now")),
-(2, 'CAD', 2932.2, datetime("now", "-2 days"), datetime("now"), datetime("now")),
-(3, 'CAD', 10.24, datetime("now", "-2 days"), datetime("now"), datetime("now")),
-(4, 'USD', 99.8, datetime("now", "-1 days"), datetime("now"), datetime("now")),
-(5, 'CAD', 928.14, datetime("now", "localtime"), datetime("now"), datetime("now")),
-(6, 'EUR', 2351.2, datetime("now", "-24 days"), datetime("now"), datetime("now")),
-(7, 'CAD', 11.57, datetime("now", "-9 days"), datetime("now"), datetime("now")),
-(8, 'CAD', 25, datetime("now", "-7 days"), datetime("now"), datetime("now")),
-(9, 'EUR', 23.98, datetime("now", "-7 days"), datetime("now"), datetime("now")),
-(10, 'USD', 88.6, datetime("now", "-33 days"), datetime("now"), datetime("now")),
-(11, 'USD', 82.6, datetime("now", "-63 days"), datetime("now"), datetime("now")),
-(12, 'USD', 18.6, datetime("now", "-59 days"), datetime("now"), datetime("now")),
-(13, 'USD', 29.6, datetime("now", "-55 days"), datetime("now"), datetime("now")),
-(14, 'USD', 43.6, datetime("now", "-717 days"), datetime("now"), datetime("now")),
-(15, 'USD', 57.6, datetime("now", "-683 days"), datetime("now"), datetime("now")),
-(16, 'USD', 10.6, datetime("now", "-679 days"), datetime("now"), datetime("now")),
-('17', 'USD', 42.02, datetime("now", "-4 days"), datetime("now"), datetime("now")),
-('18', 'USD', 10.0, datetime("now", "-4 days"), datetime("now"), datetime("now")),
-('19', 'USD', 72.34, datetime("now", "-5 days"), datetime("now"), datetime("now")),
-('20', 'USD', 10.0, datetime("now", "-487 days"), datetime("now"), datetime("now")),
-('21', 'USD', 192.18, datetime("now", "-851 days"), datetime("now"), datetime("now")),
-('22', 'USD', 98.99, datetime("now", "-1091 days"), datetime("now"), datetime("now")),
-('23', 'USD', 28.13, datetime("now", "-1051 days"), datetime("now"), datetime("now")),
-('24', 'USD', 287.19, datetime("now", "-1102 days"), datetime("now"), datetime("now")),
-('25', 'USD', 193.44, datetime("now", "-1344 days"), datetime("now"), datetime("now")),
-('26', 'USD', 13.44, datetime("now", "-1584 days"), datetime("now"), datetime("now")),
-('27', 'USD', 44.13, datetime("now", "-1573 days"), datetime("now"), datetime("now")),
-('28', 'USD', 1.32, datetime("now", "-1753 days"), datetime("now"), datetime("now")),
-('29', 'USD', 828.13, datetime("now", "-1914 days"), datetime("now"), datetime("now")),
-('30', 'USD', 600.25, datetime("now", "-2277 days"), datetime("now"), datetime("now")),
-('31', 'CAD', 101.9, datetime("now", "-1560 days"), datetime("now"), datetime("now")),
-('32', 'CAD', 21.9, datetime("now", "-1750 days"), datetime("now"), datetime("now")),
-('33', 'CAD', 2000.9, datetime("now", "-1890 days"), datetime("now"), datetime("now")),
-('34', 'CAD', 601.1, datetime("now", "-1970 days"), datetime("now"), datetime("now")),
-('35', 'CAD', 64.23, datetime("now", "-2030 days"), datetime("now"), datetime("now"));
-INSERT OR IGNORE INTO conversion (id, fromCurr, toCurr, rate) VALUES (1, 'USD', 'CAD', 1.35);
-INSERT OR IGNORE INTO conversion (id, fromCurr, toCurr, rate) VALUES (2, 'CAD', 'USD', 0.74);
-INSERT OR IGNORE INTO conversion (id, fromCurr, toCurr, rate) VALUES (3, 'USD', 'EUR', 0.94);
-INSERT OR IGNORE INTO conversion (id, fromCurr, toCurr, rate) VALUES (4, 'EUR', 'USD', 1.07);
-INSERT OR IGNORE INTO conversion (id, fromCurr, toCurr, rate) VALUES (5, 'EUR', 'CAD', 1.45);
-INSERT OR IGNORE INTO conversion (id, fromCurr, toCurr, rate) VALUES (6, 'CAD', 'EUR', 0.69);
+INSERT OR IGNORE INTO transactions (id, currency, amount, date, createdAt, updatedAt) VALUES
+(1, 'USD', 212.02, datetime('now', '-30 days'), datetime('now'), datetime('now')),
+(2, 'CAD', 2932.2, datetime('now', '-88 days'), datetime('now'), datetime('now')),
+(3, 'CAD', 10.24, datetime('now', '-93 days'), datetime('now'), datetime('now')),
+(4, 'USD', 99.8, datetime('now', '-107 days'), datetime('now'), datetime('now')),
+(5, 'CAD', 928.14, datetime('now', '-3 days'), datetime('now'), datetime('now')),
+(6, 'EUR', 2351.2, datetime('now', '-53 days'), datetime('now'), datetime('now')),
+(7, 'CAD', 11.57, datetime('now', '-132 days'), datetime('now'), datetime('now')),
+(8, 'CAD', 25, datetime('now', '-158 days'), datetime('now'), datetime('now')),
+(9, 'EUR', 23.98, datetime('now', '-200 days'), datetime('now'), datetime('now')),
+(10, 'USD', 88.6, datetime('now', '-244 days'), datetime('now'), datetime('now')),
+(11, 'USD', 82.6, datetime('now', '-263 days'), datetime('now'), datetime('now')),
+(12, 'USD', 18.6, datetime('now', '-287 days'), datetime('now'), datetime('now')),
+(13, 'USD', 29.6, datetime('now', '-301 days'), datetime('now'), datetime('now')),
+(14, 'USD', 43.6, datetime('now', '-20 days'), datetime('now'), datetime('now')),
+(15, 'USD', 57.6, datetime('now', '-38 days'), datetime('now'), datetime('now')),
+(16, 'USD', 10.6, datetime('now', '-93 days'), datetime('now'), datetime('now')),
+(17, 'USD', 42.02, datetime('now', '-108 days'), datetime('now'), datetime('now')),
+(18, 'USD', 10.0, datetime('now', '-146 days'), datetime('now'), datetime('now')),
+(19, 'USD', 72.34, datetime('now', '-181 days'), datetime('now'), datetime('now')),
+(20, 'USD', 10.0, datetime('now', '-193 days'), datetime('now'), datetime('now')),
+(21, 'USD', 192.18, datetime('now', '-235 days'), datetime('now'), datetime('now')),
+(22, 'USD', 98.99, datetime('now', '-268 days'), datetime('now'), datetime('now')),
+(23, 'USD', 28.13, datetime('now', '-281 days'), datetime('now'), datetime('now')),
+(24, 'USD', 287.19, datetime('now', '-19 days'), datetime('now'), datetime('now')),
+(25, 'USD', 193.44, datetime('now', '-61 days'), datetime('now'), datetime('now')),
+(26, 'USD', 13.44, datetime('now', '-74 days'), datetime('now'), datetime('now')),
+(27, 'USD', 44.13, datetime('now', '-117 days'), datetime('now'), datetime('now')),
+(28, 'USD', 1.32, datetime('now', '-128 days'), datetime('now'), datetime('now')),
+(29, 'USD', 828.13, datetime('now', '-171 days'), datetime('now'), datetime('now')),
+(30, 'USD', 600.25, datetime('now', '-213 days'), datetime('now'), datetime('now')),
+(31, 'CAD', 101.9, datetime('now', '-226 days'), datetime('now'), datetime('now')),
+(32, 'CAD', 21.9, datetime('now', '-265 days'), datetime('now'), datetime('now')),
+(33, 'CAD', 2000.9, datetime('now', '-281 days'), datetime('now'), datetime('now')),
+(34, 'CAD', 601.1, datetime('now', '-19 days'), datetime('now'), datetime('now')),
+(35, 'USD', 150.0, datetime('now', '-308 days'), datetime('now'), datetime('now')),
+(36, 'EUR', 75.5, datetime('now', '-308 days'), datetime('now'), datetime('now')),
+(37, 'CAD', 200.0, datetime('now', '-308 days'), datetime('now'), datetime('now')),
+(38, 'USD', 320.0, datetime('now', '-308 days'), datetime('now'), datetime('now')),
+(39, 'USD', 50.0, datetime('now', '-51 days'), datetime('now'), datetime('now')),
+(40, 'EUR', 120.0, datetime('now', '-97 days'), datetime('now'), datetime('now')),
+(41, 'CAD', 80.0, datetime('now', '-168 days'), datetime('now'), datetime('now')),
+(42, 'USD', 65.0, datetime('now', '-15 days'), datetime('now'), datetime('now')),
+(43, 'EUR', 90.0, datetime('now', '-55 days'), datetime('now'), datetime('now')),
+(44, 'CAD', 150.0, datetime('now', '-91 days'), datetime('now'), datetime('now')),
+(45, 'USD', 200.0, datetime('now', '-112 days'), datetime('now'), datetime('now')),
+(46, 'EUR', 110.0, datetime('now', '-132 days'), datetime('now'), datetime('now')),
+(47, 'CAD', 75.0, datetime('now', '-178 days'), datetime('now'), datetime('now')),
+(48, 'USD', 300.0, datetime('now', '-198 days'), datetime('now'), datetime('now')),
+(49, 'EUR', 85.0, datetime('now', '-234 days'), datetime('now'), datetime('now')),
+(50, 'CAD', 125.0, datetime('now', '-249 days'), datetime('now'), datetime('now')),
+(51, 'USD', 175.0, datetime('now', '-294 days'), datetime('now'), datetime('now')),
+(52, 'EUR', 95.0, datetime('now', '-5 days'), datetime('now'), datetime('now')),
+(53, 'CAD', 180.0, datetime('now', '-40 days'), datetime('now'), datetime('now')),
+(54, 'USD', 250.0, datetime('now', '-76 days'), datetime('now'), datetime('now')),
+(55, 'EUR', 130.0, datetime('now', '-122 days'), datetime('now'), datetime('now')),
+(56, 'CAD', 90.0, datetime('now', '-142 days'), datetime('now'), datetime('now')),
+(57, 'USD', 350.0, datetime('now', '-163 days'), datetime('now'), datetime('now')),
+(58, 'EUR', 140.0, datetime('now', '-208 days'), datetime('now'), datetime('now')),
+(59, 'CAD', 160.0, datetime('now', '-229 days'), datetime('now'), datetime('now')),
+(60, 'USD', 220.0, datetime('now', '-272 days'), datetime('now'), datetime('now')),
+(61, 'EUR', 105.0, datetime('now', '-284 days'), datetime('now'), datetime('now')),
+(62, 'CAD', 135.0, datetime('now', '-10 days'), datetime('now'), datetime('now')),
+(63, 'USD', 280.0, datetime('now', '-45 days'), datetime('now'), datetime('now')),
+(64, 'EUR', 155.0, datetime('now', '-86 days'), datetime('now'), datetime('now')),
+(65, 'CAD', 195.0, datetime('now', '-107 days'), datetime('now'), datetime('now')),
+(66, 'USD', 212.02, datetime('now', '-3 days'), datetime('now'), datetime('now')),
+(67, 'CAD', 2932.2, datetime('now', '-2 days'), datetime('now'), datetime('now')),
+(68, 'CAD', 10.24, datetime('now', '-2 days'), datetime('now'), datetime('now')),
+(69, 'USD', 99.8, datetime('now', '-1 days'), datetime('now'), datetime('now')),
+(70, 'CAD', 928.14, datetime('now'), datetime('now'), datetime('now')),
+(71, 'EUR', 2351.2, datetime('now', '-24 days'), datetime('now'), datetime('now')),
+(72, 'CAD', 11.57, datetime('now', '-9 days'), datetime('now'), datetime('now')),
+(73, 'CAD', 25, datetime('now', '-7 days'), datetime('now'), datetime('now')),
+(74, 'EUR', 23.98, datetime('now', '-7 days'), datetime('now'), datetime('now')),
+(75, 'USD', 88.6, datetime('now', '-33 days'), datetime('now'), datetime('now')),
+(76, 'USD', 82.6, datetime('now', '-63 days'), datetime('now'), datetime('now')),
+(77, 'USD', 18.6, datetime('now', '-59 days'), datetime('now'), datetime('now')),
+(78, 'USD', 29.6, datetime('now', '-55 days'), datetime('now'), datetime('now')),
+(79, 'USD', 43.6, datetime('now', '-717 days'), datetime('now'), datetime('now')),
+(80, 'USD', 57.6, datetime('now', '-683 days'), datetime('now'), datetime('now')),
+(81, 'USD', 10.6, datetime('now', '-679 days'), datetime('now'), datetime('now')),
+(82, 'USD', 42.02, datetime('now', '-4 days'), datetime('now'), datetime('now')),
+(83, 'USD', 10.0, datetime('now', '-4 days'), datetime('now'), datetime('now')),
+(84, 'USD', 72.34, datetime('now', '-5 days'), datetime('now'), datetime('now')),
+(85, 'USD', 10.0, datetime('now', '-487 days'), datetime('now'), datetime('now')),
+(86, 'USD', 192.18, datetime('now', '-851 days'), datetime('now'), datetime('now')),
+(87, 'USD', 98.99, datetime('now', '-1091 days'), datetime('now'), datetime('now')),
+(88, 'USD', 28.13, datetime('now', '-1051 days'), datetime('now'), datetime('now')),
+(89, 'USD', 287.19, datetime('now', '-1102 days'), datetime('now'), datetime('now')),
+(90, 'USD', 193.44, datetime('now', '-1344 days'), datetime('now'), datetime('now')),
+(91, 'USD', 13.44, datetime('now', '-1584 days'), datetime('now'), datetime('now')),
+(92, 'USD', 44.13, datetime('now', '-1573 days'), datetime('now'), datetime('now')),
+(93, 'USD', 1.32, datetime('now', '-1753 days'), datetime('now'), datetime('now')),
+(94, 'USD', 828.13, datetime('now', '-1914 days'), datetime('now'), datetime('now')),
+(95, 'USD', 600.25, datetime('now', '-2277 days'), datetime('now'), datetime('now')),
+(96, 'CAD', 101.9, datetime('now', '-1560 days'), datetime('now'), datetime('now')),
+(97, 'CAD', 21.9, datetime('now', '-1750 days'), datetime('now'), datetime('now')),
+(98, 'CAD', 2000.9, datetime('now', '-1890 days'), datetime('now'), datetime('now')),
+(99, 'CAD', 601.1, datetime('now', '-1970 days'), datetime('now'), datetime('now')),
+(100, 'CAD', 64.23, datetime('now', '-2030 days'), datetime('now'), datetime('now'));
+
+-- Conversion rates
+INSERT OR IGNORE INTO conversion (id, fromCurr, toCurr, rate) VALUES
+(1, 'USD', 'CAD', 1.35),
+(2, 'CAD', 'USD', 0.74),
+(3, 'USD', 'EUR', 0.94),
+(4, 'EUR', 'USD', 1.07),
+(5, 'EUR', 'CAD', 1.45),
+(6, 'CAD', 'EUR', 0.69);

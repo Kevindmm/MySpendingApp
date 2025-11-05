@@ -8,6 +8,7 @@ import javax.persistence.*;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 
@@ -20,6 +21,8 @@ public class TransactionV2 {
             name = "UUID",
             strategy = "org.hibernate.id.UUIDGenerator"
     )
+    @Type(type = "org.hibernate.type.UUIDCharType")
+    @Column(columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private UUID id;
 
     @CreationTimestamp
@@ -44,12 +47,12 @@ public class TransactionV2 {
     private String note;
 
     //P1.5 User and Category relationships
-    @ManyToOne(fetch = FetchType.LAZY) //FK to User
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "VARCHAR(36)")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY) //FK to Category
-    @JoinColumn(name = "category_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false, columnDefinition = "VARCHAR(36)")
     private Category category;
 
     public TransactionV2(){}
