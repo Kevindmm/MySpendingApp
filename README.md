@@ -3,6 +3,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Kevindmm_MySpendingApp&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Kevindmm_MySpendingApp)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Kevindmm_MySpendingApp&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Kevindmm_MySpendingApp)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Kevindmm_MySpendingApp&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Kevindmm_MySpendingApp)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Kevindmm_MySpendingApp&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Kevindmm_MySpendingApp)
 
 **MySpendingApp** is a lightweight personal finance tracker built with **Java 17** and **Spring Boot**.\
 The goal is to create a clear and maintainable backend while showcasing modern Java 17 features in a practical way.
@@ -230,7 +231,20 @@ To ensure you are using the correct version of prettier, make sure to format you
 
 Seed files live under `server/src/main/resources/`.
 
+
 ---
+
+
+## Architecture Decision Records
+
+📄 **[ADR-001: Phase 0 Setup & Phase 1 DB](docs/ADRs/001-Phase0_AND_Phase1-decisions.md)**  
+Captures setup and data model decisions (Docker, UUID PKs, test environments, seed strategy).
+
+📄 **[ADR-002: Phase 2 – MVP ✍️](docs/ADRs/002-Phase2-decisions.md)**
+Covers SonarQube integration and JWT vs OAuth2/session-based auth decision and more...
+
+---
+
 
 ## Verify That Everything Is Set Up Correctly
 
