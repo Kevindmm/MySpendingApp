@@ -2,14 +2,19 @@ name: SonarQube
 on:
   push:
     branches:
-      - main
-      - 'feature/**'
+      - main           # Trigger on pushes to main branch due to free tier limitations
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
   build:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
+
+    env:
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      SPRING_DATASOURCE_URL: jdbc:sqlite:data/mySpendingApp.db  # Override for CI relative path
+      SPENDINGAPP_DB_URL: jdbc:sqlite:data/mySpendingApp.db     # Override custom property for CI
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,6 +36,9 @@ jobs:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
+      - name: Create data directory for SQLite
+        run: mkdir -p data
+        working-directory: server
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
