@@ -2,7 +2,9 @@ name: CI - Build & Test   # Name of the workflow, will appear in GitHub Actions 
 
 on:
   push:                   # Trigger when code is pushed
-    branches: [ "main" ]  # Only run on main branch
+    branches:
+      - "main"            # Trigger on pushes to main branch
+      - "feature/**"      # Also trigger on pushes to feature branches
   pull_request:           # Trigger also when a PR targets main
     branches: [ "main" ]
 
@@ -10,6 +12,11 @@ jobs:
   build-backend:                    #Job ID
     name: Build & Test Backend      #Display name in Actions UI
     runs-on: ubuntu-latest          #Use the latest Ubuntu runner provided by GitHub
+
+    env:
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}  #Set environment variable for the job from GitHub Secrets
+      SPRING_DATASOURCE_URL: jdbc:sqlite:data/mySpendingApp.db  # Override for CI relative path
+      SPENDINGAPP_DB_URL: jdbc:sqlite:data/mySpendingApp.db     # Override custom property for CI
 
     steps:
       - name: Checkout repository
@@ -19,7 +26,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '17'        
+          java-version: '17'
 
       - name: Cache Gradle packages #Speeds up builds by caching Gradle dependencies between runs
         uses: actions/cache@v3
@@ -30,16 +37,26 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-        
+
 
       - name: Make Gradle wrapper executable    #Ensures the Gradle wrapper script has execute permissions
         run: chmod +x ./gradlew
         working-directory: server
-        
+
+      - name: Create data directory for SQLite  # Create the required directory relative to server
+        run: mkdir -p data
+        working-directory: server
 
       - name: Build with Gradle                 #Builds the backend project and runs tests inside the server directory
-        run: ./gradlew build --no-daemon
+        run: ./gradlew build --no-daemon --stacktrace --info
         working-directory: server
+
+      - name: Upload test reports               # Upload test reports as artifacts for detailed logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: server/build/reports/tests/test/
 
 
   build-frontend:

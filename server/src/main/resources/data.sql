@@ -4,8 +4,8 @@
 
 -- Users (passwords: "admin123" y "john123" en BCrypt $10)
 INSERT OR IGNORE INTO users (id, email, name, last_name, password_hash, created_at) VALUES
-('550e8400-e29b-41d4-a716-446655440000', 'admin@example.com', 'Admin', 'User', '$2a$10$N9qo8uLOickgx2ZMRZoMy.8g3LjQxZG5p7pT8LUmtA5dF0WqK0Fwy', datetime('now')),
-('660e8400-e29b-41d4-a716-446655440001', 'john.doe@example.com', 'John', 'Doe', '$2a$10$e0MYzXyjpJS7Pd0RVvHwHe1VCYnlhBqT1r8p6cDK8Zm2L8d0YFe1u', datetime('now'));
+('550e8400-e29b-41d4-a716-446655440000', 'admin@example.com', 'admin', 'User', '$2a$10$qZSTboWxyRyZ4uCmfSjEV.XzUFvTBdZAJ3ePZkZd23S0QJ1RQCF7O', datetime('now')),
+('660e8400-e29b-41d4-a716-446655440001', 'john.doe@example.com', 'John', 'Doe', '$2a$10$Ks1s.yvWxQ3jF7Bz.XooaOFSsF/Sf5oBTxso19VkkElqV/2.4kFVq', datetime('now'));
 
 -- Categories (per user, respeta UK user_id+name)
 INSERT OR IGNORE INTO categories (id, name, color, user_id) VALUES
