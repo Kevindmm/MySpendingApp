@@ -84,12 +84,13 @@ focus on business logic and UI.*
 *Goal: implement authentication, core spending CRUD, and quality gates on top of the existing `User`, `Category`, and `TransactionV2` entities from Phase 1.*
 
 - [x] **P2.1** SonarQube integration with GitHub Actions; add quality gate badge to README
-- [ ] **P2.2** JWT authentication: `AuthController`, `JwtTokenProvider`, `SecurityConfig`; `POST /api/v1/auth/login` endpoint
-- [ ] **P2.3** `TransactionService` layer with `create`, `findAllByUser`, `update`, `delete` methods; DTOs: `TransactionRequest`, `TransactionResponse`, `CategoryResponse`
-- [ ] **P2.4** REST API for TransactionV2: `POST`, `GET`, `PUT`, `DELETE /api/v1/transactions`; JWT-secured endpoints with `@PreAuthorize`
-- [ ] **P2.5** `CategoryService` + REST API: `POST`, `GET`, `PUT`, `DELETE /api/v1/categories`; prevent deletion if transactions exist
-- [ ] **P2.6** Integration tests for auth + CRUD: login flow, transaction CRUD with JWT, 403 validation
-- [ ] **P2.7** Monthly summary endpoint: `GET /api/v1/transactions/summary?month=YYYY-MM`; use `Stream` API for grouping/totals
+- [x] **P2.2** JWT authentication: `AuthController`, `JwtTokenProvider`, `JwtAuthenticationFilter`, `SecurityAuthConfig`; `POST /api/v1/auth/login` endpoint
+- [ ] **P2.3** `AuthController` implementation of refresh token and logout endpoints; extend `JwtTokenProvider` for refresh tokens; update `SecurityAuthConfig`
+- [ ] **P2.4** `TransactionService` layer with `create`, `findAllByUser`, `update`, `delete` methods; DTOs: `TransactionRequest`, `TransactionResponse`, `CategoryResponse`
+- [ ] **P2.5** REST API for TransactionV2: `POST`, `GET`, `PUT`, `DELETE /api/v1/transactions`; JWT-secured endpoints with `@PreAuthorize`
+- [ ] **P2.6** `CategoryService` + REST API: `POST`, `GET`, `PUT`, `DELETE /api/v1/categories`; prevent deletion if transactions exist
+- [ ] **P2.7** Integration tests for auth + CRUD: login flow, transaction CRUD with JWT, 403 validation
+- [ ] **P2.8** Monthly summary endpoint: `GET /api/v1/transactions/summary?month=YYYY-MM`; use `Stream` API for grouping/totals
 - And more...
 
 **Key Java 17 features used:**

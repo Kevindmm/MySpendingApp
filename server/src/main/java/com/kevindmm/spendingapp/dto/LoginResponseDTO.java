@@ -10,7 +10,7 @@ public class LoginResponseDTO {
 
     public LoginResponseDTO(String token, String username){
         this.token = token;
-        this.username = username;
+        this.username = username; // Fixed to email
     }
 
     public String getToken(){

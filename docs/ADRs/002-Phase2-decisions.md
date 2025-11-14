@@ -33,17 +33,18 @@ Integrated **SonarCloud** with GitHub Actions to enforce code quality gates.
 
 ## P2.2 – JWT Authentication
 
-**Date**: 05/11/2025
-**Being Implemented**
+**Date**: 13/11/2025  
+**Commit**: `P2.2 - add JWT authentication and config _ feat(authentication) (#2)`
+**Status**: Implemented (with minor ADR alignment needed)
 
 ### Decision
-Use **JWT (JSON Web Tokens)** for stateless authentication instead of OAuth2 or session-based auth.
+Use **JWT (JSON Web Tokens)** for stateless authentication instead of OAuth2 or session-based auth. Algorithm automatically selects **HS384 (HMAC-SHA384)** if secret key ≥48 bytes (384 bits), providing stronger security than HS256.
 
 ### Why
 - **Stateless**: No server-side session storage required; scales horizontally.
-- **Self-contained**: Token includes `userId`, `email`, `roles`; no DB lookup on every request.
-- **Standard**: Industry-proven, well-supported by Spring Security (`@PreAuthorize`, `JwtTokenProvider`).
-- **Simplicity**: For a single-user MVP, JWT avoids OAuth2's complexity (authorization servers, client credentials, refresh token flows).
+- **Self-contained**: Token includes claims; no DB lookup on every request.
+- **Standard**: Industry-proven, well-supported by Spring Security (`JwtTokenProvider`, `JwtAuthenticationFilter`).
+- **Simplicity**: For a single-user MVP, JWT avoids OAuth2's complexity.
 
 ### Alternatives Considered
 
@@ -53,21 +54,65 @@ Use **JWT (JSON Web Tokens)** for stateless authentication instead of OAuth2 or 
 | **OAuth2 (e.g., Google)** | Delegates auth; social login          | External dependency; overkill for local-first app     |
 | **Basic Auth**        | Zero setup                                | Insecure over HTTP; no token expiration               |
 
-### Trade-offs
+## Trade-offs
 - ✅ **Scalability**: Stateless tokens work across distributed backends (future-proof).
-- ✅ **Security**: HMAC-signed tokens prevent tampering; short-lived (1h expiry) reduces risk.
+- ✅ **Security**: HMAC-signed tokens prevent tampering; short-lived (1h expiry in Prod env) reduces risk. HS384 selected automatically for stronger hashing if key allows.
 - ⚠️ **Token revocation**: No built-in invalidation (acceptable for MVP; future: add refresh tokens + blacklist).
 - ⚠️ **XSS risk**: Storing JWT in `localStorage` exposes it to XSS (mitigated by `HttpOnly` cookies in Phase 3).
 
 ### Implementation
-- **`AuthController`**: `POST /api/v1/auth/login` returns JWT on valid credentials.
-- **`JwtTokenProvider`**: Generates/validates tokens (secret key from `application.properties`).
-- **`SecurityConfig`**: Configures filter chain to extract JWT from `Authorization: Bearer <token>`.
-- **Token structure**:
-  ```json
+- **`AuthController`**: `POST /api/v1/auth/login` returns `LoginResponseDTO` (token + username/email) on valid credentials.
+- **`JwtTokenProvider`**: Generates/validates tokens (secret key from `application.properties`; enforces ≥32 bytes, auto-selects HS384 if ≥48 bytes).
+- **`SecurityAuthConfig`**: Configures filter chain to extract JWT from `Authorization: Bearer <token>`.
+- **`JwtAuthenticationFilter`**: Processes JWT in requests.
+- **Token structure** (JWT payload, returned in `LoginResponseDTO.token` - client decodes to access):
+```Token payload - json
   {
-    "sub": "user-uuid",
-    "email": "demo@example.com",
-    "iat": 1704067200,
-    "exp": 1704070800
+    "sub": "john.doe@example.com",
+    "iat": 1763146656,
+    "exp": 1763506656
   }
+```
+
+> **Note**: Currently uses email as `sub` for usability (tradeoff vs. privacy). In Phase 3, refactor to use user UUID as `sub` and add `email` and `roles` claims.
+
+
+---
+
+
+## P2.3 – Refresh Token Endpoint
+
+**Date**: 14/11/2025
+**Commit**: `feat(refresh token) (#3)`
+**Status**: In Progress
+
+### Decision
+Implement a refresh token endpoint to extend JWT validity without re-authentication.
+
+### Why
+- **Refresh Tokens**: Allows clients to obtain new JWTs using a long-lived refresh token, improving UX by avoiding frequent logins while maintaining security.
+- **Stateless Extension**: Builds on existing JWT setup; refresh tokens stored securely (e.g., HttpOnly cookies) mitigate XSS risks.
+
+### Alternatives Considered
+- **No Refresh**: Simpler; short-lived JWTs suffice for MVP but poor UX.
+- **Session Extension**: Easy with Spring but breaks statelessness; not scalable.
+- **OAuth2 Refresh**: Standard; delegates to providers but overkill for local auth.
+
+### Trade-offs
+- ✅ **Security**: Refresh tokens can be revoked; short JWT expiry reduces exposure.
+- ✅ **Usability**: Seamless token renewal without credentials.
+- ⚠️ **Complexity**: Adds refresh token storage/validation logic.
+- ⚠️ **Storage**: Refresh tokens need secure, revocable storage (e.g., DB blacklist for MVP).
+
+### Implementation
+- **Refresh Endpoint**: `POST /api/v1/auth/refresh` accepts refresh token, validates it, and returns new `LoginResponseDTO` with fresh JWT.
+- **JwtTokenProvider**: Extend to generate/validate refresh tokens (longer expiry, e.g., 7 days).
+- **SecurityAuthConfig**: Update filter chain to handle refresh tokens securely.
+- **Token Structure**: Refresh token payload similar to JWT but with extended expiry.
+
+### What Will Be Done
+- Generate/validate refresh tokens.
+- Implement endpoint in `AuthController`.
+
+
+ ---
