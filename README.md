@@ -1,7 +1,6 @@
 # MySpendingApp
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Kevindmm_MySpendingApp&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Kevindmm_MySpendingApp)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Kevindmm_MySpendingApp&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Kevindmm_MySpendingApp)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Kevindmm_MySpendingApp&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Kevindmm_MySpendingApp)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Kevindmm_MySpendingApp&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Kevindmm_MySpendingApp)
 
@@ -40,19 +39,19 @@ The goal is to create a clear and maintainable backend while showcasing modern J
 ---
 
 
-## 🚀 Development Roadmap
+## Development Roadmap
 
 | Phase                              | Purpose | Status |
 |------------------------------------|---------|--------|
-| Phase 0 – Setup                    | Skeleton, CI, Docker, health-check | ✅ Done |
-| Phase 1 – Data Model               | Finalise production-ready schema (users, categories, transactions) on SQLite/H2; seed demo data | ✅ Done |
-| Phase 2 – MVP (MySpendingApp CRUD) | Implement login + JWT and full spending CRUD on top of the mature DB | ✍️ In progress |
-| Phase 3 – Modernisation            | Replace legacy constructs with Java 17+ features; introduce records, sealed classes | ⬜ Planned |
-| Phase 4 – Enhancements             | FX API integration, dashboards, reporting, test-data tools | ⬜ Planned |
+| Phase 0 – Setup                    | Skeleton, CI, Docker, health-check | Done |
+| Phase 1 – Data Model               | Finalise production-ready schema (users, categories, transactions) on SQLite/H2; seed demo data | Done |
+| Phase 2 – MVP (MySpendingApp CRUD) | Implement login + JWT and full spending CRUD on top of the mature DB | In progress |
+| Phase 3 – Modernisation            | Replace legacy constructs with Java 17+ features; introduce records, sealed classes | Planned |
+| Phase 4 – Enhancements             | FX API integration, dashboards, reporting, test-data tools | Planned |
 
 
 
-### ✅ Phase 0 — Setup (Completed!)
+### Phase 0 — Setup (Completed!)
 *Goal: bring the project to life locally with CI, health-check, logging, and a working Docker stack.*
 
 - [x] **P0.1**  Spring Boot skeleton + Gradle build
@@ -63,7 +62,7 @@ The goal is to create a clear and maintainable backend while showcasing modern J
 
 
 
-### ✅ Phase 1 — Data Model (Completed!)
+### Phase 1 — Data Model (Completed!)
 *Goal: lock down a production-ready schema<—>users, categories, transactions and preload demo data so later phases can 
 focus on business logic and UI.*
 
@@ -80,7 +79,7 @@ focus on business logic and UI.*
 
 
 
-### ✍️ Phase 2 — MVP (MySpendingApp CRUD + JWT)
+### Phase 2 — MVP (MySpendingApp CRUD + JWT)
 *Goal: implement authentication, core spending CRUD, and quality gates on top of the existing `User`, `Category`, and `TransactionV2` entities from Phase 1.*
 
 - [x] **P2.1** SonarQube integration with GitHub Actions; add quality gate badge to README
@@ -101,7 +100,7 @@ focus on business logic and UI.*
 
 
 
-### 🕓 Phase 3 — Modernization (planned) !!Needs clarification!!
+### Phase 3 — Modernization (planned) !!Needs clarification!!
 
 - Switch expressions & pattern matching in business logic
 - Sealed hierarchy for `SpendingType` (`INCOME` / `EXPENSE`)
@@ -110,7 +109,7 @@ focus on business logic and UI.*
 
 
 
-### 🕓 Phase 4 — Enhancements (planned) !!Needs clarification!!
+### Phase 4 — Enhancements (planned) !!Needs clarification!!
 - [ ] **P1.6** Update Conversion model to UUID PKs
 - Currency-rate integration & automatic conversion
 - [ ] **P1.5**  ImportBatch entity & FK from Transaction
@@ -241,7 +240,7 @@ Seed files live under `server/src/main/resources/`.
 📄 **[ADR-001: Phase 0 Setup & Phase 1 DB](docs/ADRs/001-Phase0_AND_Phase1-decisions.md)**  
 Captures setup and data model decisions (Docker, UUID PKs, test environments, seed strategy).
 
-📄 **[ADR-002: Phase 2 – MVP ✍️](docs/ADRs/002-Phase2-decisions.md)**
+📄 **[ADR-002: Phase 2 – MVP (In progress...)](docs/ADRs/002-Phase2-decisions.md)**
 Covers SonarQube integration and JWT vs OAuth2/session-based auth decision and more...
 
 ---
@@ -254,4 +253,3 @@ To verify that the frontend is working properly, go to [http://localhost:3000](h
 ![Starting Screen](docs/mySpendingApp.png)
 
 ---
-
