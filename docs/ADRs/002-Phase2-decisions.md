@@ -80,39 +80,64 @@ Use **JWT (JSON Web Tokens)** for stateless authentication instead of OAuth2 or 
 ---
 
 
-## P2.3 – Refresh Token Endpoint
+## P2.3 – Refresh Token & Logout
 
-**Date**: 14/11/2025
-**Commit**: `feat(refresh token) (#3)`
-**Status**: In Progress
+**Date**: 27/01/2026
+**Commit**: `feat(refresh token) - Hybrid approach with stateful refresh tokens`
+**Status**: In progress
 
 ### Decision
-Implement a refresh token endpoint to extend JWT validity without re-authentication.
+Implement **Hybrid Token System**: stateless JWT access tokens (100h) + stateful refresh tokens (7d) stored in database. Enables token revocation while maintaining scalability.
 
 ### Why
-- **Refresh Tokens**: Allows clients to obtain new JWTs using a long-lived refresh token, improving UX by avoiding frequent logins while maintaining security.
-- **Stateless Extension**: Builds on existing JWT setup; refresh tokens stored securely (e.g., HttpOnly cookies) mitigate XSS risks.
+- **Revocation**: Stateful refresh tokens can be invalidated immediately (logout, security breach).
+- **Scalability**: Access tokens remain stateless; only refresh operations hit DB.
+- **Security**: Short-lived access tokens limit exposure; refresh tokens enable seamless renewal.
+- **Auditability**: Database storage enables session tracking and security monitoring.
 
 ### Alternatives Considered
-- **No Refresh**: Simpler; short-lived JWTs suffice for MVP but poor UX.
-- **Session Extension**: Easy with Spring but breaks statelessness; not scalable.
-- **OAuth2 Refresh**: Standard; delegates to providers but overkill for local auth.
+
+| Approach              | Pros                                      | Cons                                                  |
+|-----------------------|-------------------------------------------|-------------------------------------------------------|
+| **Pure Stateless**    | Maximum scalability; zero DB overhead     | Cannot revoke tokens; logout is client-side only      |
+| **Pure Stateful**     | Easy revocation; built-in Spring support  | Requires session storage; breaks horizontal scaling   |
+| **Hybrid (chosen)**   | Revocable + scalable                      | Slightly more complex implementation                  |
+| **OAuth2 Refresh**    | Industry standard                         | Overkill for local auth; external dependencies        |
 
 ### Trade-offs
-- ✅ **Security**: Refresh tokens can be revoked; short JWT expiry reduces exposure.
-- ✅ **Usability**: Seamless token renewal without credentials.
-- ⚠️ **Complexity**: Adds refresh token storage/validation logic.
-- ⚠️ **Storage**: Refresh tokens need secure, revocable storage (e.g., DB blacklist for MVP).
+- ✅ **Security**: Refresh tokens revocable; access tokens short-lived; database tracks revocation.
+- ✅ **Usability**: Seamless renewal without re-authentication; 7-day refresh window.
+- ✅ **Performance**: Most requests stateless; only refresh operations query DB.
+- ⚠️ **Complexity**: Requires entity, repository, service layer, and validation logic.
+- ⚠️ **Storage**: Refresh tokens in DB; cleanup strategy needed (see DB-evolution.md).
 
 ### Implementation
-- **Refresh Endpoint**: `POST /api/v1/auth/refresh` accepts refresh token, validates it, and returns new `LoginResponseDTO` with fresh JWT.
-- **JwtTokenProvider**: Extend to generate/validate refresh tokens (longer expiry, e.g., 7 days).
-- **SecurityAuthConfig**: Update filter chain to handle refresh tokens securely.
-- **Token Structure**: Refresh token payload similar to JWT but with extended expiry.
+- **`RefreshToken` entity**: Stores token, user, expiry, revocation status (schema in DB-evolution.md).
+- **`RefreshTokenService`**: Business logic for create, validate, revoke, cleanup.
+- **`AuthController`**:
+  - `POST /api/auth/login`: Returns both access + refresh tokens; saves refresh to DB.
+  - `POST /api/auth/refresh`: Validates refresh token (JWT + DB + expiry + revoked), returns new access token.
+  - `POST /api/auth/logout`: Revokes refresh token in DB.
+- **`JwtTokenProvider`**: Extended to generate/validate refresh tokens with `"type":"refresh"` claim.
+- **DTOs**: `RefreshTokenRequestDTO`, `RefreshTokenResponseDTO`, updated `LoginResponseDTO`.
+- **Token structure**:
+  ```json
+  // Access Token (stateless, 100h)
+  { "sub": "user@example.com", "iat": 1769511332, "exp": 1769871332 }
+  
+  // Refresh Token (stateful, 7d)
+  { "sub": "user@example.com", "type": "refresh", "iat": 1769511332, "exp": 1770116132 }
+  ```
 
-### What Will Be Done
-- Generate/validate refresh tokens.
-- Implement endpoint in `AuthController`.
+### Testing
+- New tests added, all passing.
+- Coverage: JwtTokenProvider, RefreshTokenService, AuthController, DTOs, entity.
+- H2 in-memory DB for tests (see application-test.properties).
 
+### Future Enhancements
+- Device tracking (user agent, IP) for session management.
+- Automatic cleanup job for expired tokens.
+- HttpOnly cookies for refresh token storage (XSS mitigation).
+- Rate limiting for refresh endpoint.
 
- ---
+---

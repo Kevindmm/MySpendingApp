@@ -84,7 +84,7 @@ focus on business logic and UI.*
 
 - [x] **P2.1** SonarQube integration with GitHub Actions; add quality gate badge to README
 - [x] **P2.2** JWT authentication: `AuthController`, `JwtTokenProvider`, `JwtAuthenticationFilter`, `SecurityAuthConfig`; `POST /api/v1/auth/login` endpoint
-- [ ] **P2.3** `AuthController` implementation of refresh token and logout endpoints; extend `JwtTokenProvider` for refresh tokens; update `SecurityAuthConfig`
+- [ ] **P2.3** Refresh token implementation: `RefreshToken` entity, `RefreshTokenService`, `/api/auth/refresh` endpoint; hybrid approach (stateless access + stateful refresh); logout endpoint
 - [ ] **P2.4** `TransactionService` layer with `create`, `findAllByUser`, `update`, `delete` methods; DTOs: `TransactionRequest`, `TransactionResponse`, `CategoryResponse`
 - [ ] **P2.5** REST API for TransactionV2: `POST`, `GET`, `PUT`, `DELETE /api/v1/transactions`; JWT-secured endpoints with `@PreAuthorize`
 - [ ] **P2.6** `CategoryService` + REST API: `POST`, `GET`, `PUT`, `DELETE /api/v1/categories`; prevent deletion if transactions exist
@@ -93,7 +93,7 @@ focus on business logic and UI.*
 - And more...
 
 **Key Java 17 features used:**
-- Records for DTOs (`LoginRequest`, `TransactionRequest`, `TransactionResponse`)
+- Records for DTOs (`LoginRequest`, `LoginResponse`, `RefreshTokenRequest`, `RefreshTokenResponse`, `TransactionRequest`, `TransactionResponse`)
 - `Stream.toList()` for mapping/filtering
 - `var` in service methods
 - Switch expressions in validation logic
@@ -135,18 +135,18 @@ This section contains all the information required for getting the app up and ru
 - [server/](server/) - the backend (Java 17 + Spring Boot 2.6.6)
 - [client/](client/) - the frontend (React)
 
-You can run the stack with Docker (recommended) or run server/client locally in separate terminals.
+**Note:** Docker is the recommended way to run the application. It ensures consistent environment and avoids Java version conflicts.
 
 ---
 
-### Docker (recommended)
+### Docker
 
 To run the stack with Docker, follow these steps:
 
 1. From the repo root, build and start the services:
 
 ```bash
-  docker compose up --build
+docker compose up --build
 ```
 
 2. Check the backend:
@@ -159,65 +159,18 @@ To run the stack with Docker, follow these steps:
 4. Stop everything:
 
 ```bash
-  docker compose down
+docker compose down
 ```
 
----
+#### Mac (Apple Silicon M1/M2/M3)
 
-### Server (local)
-
-To run the server locally (without Docker), follow these steps:
-
-1. Navigate to the server directory (`cd server`)
-
-2. Install/build dependencies:
-  - Unix/macOS: `./gradlew build`
-  - Windows: `.\gradlew build`
-
-3. Start the server (Tomcat on port 8080):
-  - Unix/macOS: `./gradlew bootRun`
-  - Windows: `.\gradlew bootRun`
-
----
-
-### Client (local)
-
-- System requirements
-  - NodeJS v18
-
-To run the client locally, follow these steps:
-
-1. Navigate to the client directory (`cd client`)
-
-2. Install dependencies:
+If you're on a Mac with Apple Silicon, use the Mac-specific compose file:
 
 ```bash
-  npm install
+docker compose -f docker-compose.mac.yml up --build
 ```
 
-You can ignore the severity vulnerabilities, this is a [known issue](https://github.com/facebook/create-react-app/issues/11174) related to `create-react-app` and not actual vulnerabilities for this setup.
-
-3. Start the client:
-
-```bash
-  npm start
-```
-
----
-
-## Formatting Client
-
-To format your code using [prettier](https://prettier.io/), follow these steps:
-
-1. Navigate to the client directory (`cd client`)
-
-2. Run this command:
-
-```bash
-  npm run lint
-```
-
-To ensure you are using the correct version of prettier, make sure to format your code after installing the dependencies (`npm install`).
+**Note:** The Mac compose file uses Ubuntu-based images (jammy) instead of Alpine for ARM64 compatibility.
 
 ---
 
