@@ -13,10 +13,7 @@ jobs:
     name: Build & Test Backend      #Display name in Actions UI
     runs-on: ubuntu-latest          #Use the latest Ubuntu runner provided by GitHub
 
-    env:
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}  #Set environment variable for the job from GitHub Secrets
-      SPRING_DATASOURCE_URL: jdbc:sqlite:data/mySpendingApp.db  # Override for CI relative path
-      SPENDINGAPP_DB_URL: jdbc:sqlite:data/mySpendingApp.db     # Override custom property for CI
+    # No env variables needed - tests use application-test.properties with H2
 
     steps:
       - name: Checkout repository
