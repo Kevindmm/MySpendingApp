@@ -185,12 +185,12 @@ class AuthControllerTest {
 
         ResponseEntity<RefreshTokenResponseDTO> responseEntity = authController.refreshToken(request);
 
-        assertEquals(401, responseEntity.getStatusCodeValue());
+        assertEquals(400, responseEntity.getStatusCodeValue());
         assertNull(responseEntity.getBody());
     }
 
     @Test
-    void refreshToken_withRevokedToken_returns401() {
+    void refreshToken_withRevokedToken_returns400() {
         User userMock = createMockUser();
         RefreshToken revokedToken = new RefreshToken("revoked-token", userMock, Instant.now().plusSeconds(604800));
         revokedToken.setRevoked(true);
@@ -202,7 +202,7 @@ class AuthControllerTest {
 
         ResponseEntity<RefreshTokenResponseDTO> responseEntity = authController.refreshToken(request);
 
-        assertEquals(401, responseEntity.getStatusCodeValue());
+        assertEquals(400, responseEntity.getStatusCodeValue());
         assertNull(responseEntity.getBody());
     }
 
@@ -220,7 +220,7 @@ class AuthControllerTest {
 
         ResponseEntity<RefreshTokenResponseDTO> responseEntity = authController.refreshToken(request);
 
-        assertEquals(401, responseEntity.getStatusCodeValue());
+        assertEquals(400, responseEntity.getStatusCodeValue());
         assertNull(responseEntity.getBody());
     }
 
@@ -235,5 +235,85 @@ class AuthControllerTest {
         assertEquals(401, responseEntity.getStatusCodeValue());
         assertNull(responseEntity.getBody());
     }
+    // ==================== LOGOUT TESTS ====================
+
+    @Test
+    void logout_withValidToken_returnsSuccess() {
+        User userMock = createMockUser();
+        RefreshToken validToken = new RefreshToken("valid-refresh-token", userMock, Instant.now().plusSeconds(3600));
+
+        Mockito.when(jwtTokenProvider.validateRefreshToken("valid-refresh-token")).thenReturn(true);
+        Mockito.when(refreshTokenService.findByToken("valid-refresh-token")).thenReturn(validToken);
+        Mockito.doNothing().when(refreshTokenService).revokeRefreshToken("valid-refresh-token");
+
+        RefreshTokenRequestDTO request = new RefreshTokenRequestDTO("valid-refresh-token");
+
+        ResponseEntity<?> responseEntity = authController.logout(request);
+
+        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertNotNull(responseEntity.getBody());
+    }
+
+    @Test
+    void logout_withInvalidFormat_returns401() {
+        Mockito.when(jwtTokenProvider.validateRefreshToken("invalid-format-token")).thenReturn(false);
+
+        RefreshTokenRequestDTO request = new RefreshTokenRequestDTO("invalid-format-token");
+
+        ResponseEntity<?> responseEntity = authController.logout(request);
+
+        assertEquals(401, responseEntity.getStatusCodeValue());
+        assertNull(responseEntity.getBody());
+    }
+
+    @Test
+    void logout_withNonExistingToken_returns400() {
+        Mockito.when(jwtTokenProvider.validateRefreshToken("non-existing-token")).thenReturn(true);
+        Mockito.when(refreshTokenService.findByToken("non-existing-token"))
+                .thenThrow(new RuntimeException("Token not found"));
+
+        RefreshTokenRequestDTO request = new RefreshTokenRequestDTO("non-existing-token");
+
+        ResponseEntity<?> responseEntity = authController.logout(request);
+
+        assertEquals(400, responseEntity.getStatusCodeValue());
+        assertNull(responseEntity.getBody());
+    }
+
+    @Test
+    void logout_withRevokedToken_returns400() {
+        User userMock = createMockUser();
+        RefreshToken revokedToken = new RefreshToken("revoked-token", userMock, Instant.now().plusSeconds(3600));
+        revokedToken.setRevoked(true);
+
+        Mockito.when(jwtTokenProvider.validateRefreshToken("revoked-token")).thenReturn(true);
+        Mockito.when(refreshTokenService.findByToken("revoked-token")).thenReturn(revokedToken);
+
+        RefreshTokenRequestDTO request = new RefreshTokenRequestDTO("revoked-token");
+
+        ResponseEntity<?> responseEntity = authController.logout(request);
+
+        assertEquals(400, responseEntity.getStatusCodeValue());
+        assertNull(responseEntity.getBody());
+    }
+
+    @Test
+    void logout_withServiceException_returns400() {
+        User userMock = createMockUser();
+        RefreshToken validToken = new RefreshToken("valid-token", userMock, Instant.now().plusSeconds(3600));
+
+        Mockito.when(jwtTokenProvider.validateRefreshToken("valid-token")).thenReturn(true);
+        Mockito.when(refreshTokenService.findByToken("valid-token")).thenReturn(validToken);
+        Mockito.doThrow(new RuntimeException("Database error"))
+                .when(refreshTokenService).revokeRefreshToken("valid-token");
+
+        RefreshTokenRequestDTO request = new RefreshTokenRequestDTO("valid-token");
+
+        ResponseEntity<?> responseEntity = authController.logout(request);
+
+        assertEquals(400, responseEntity.getStatusCodeValue());
+        assertNull(responseEntity.getBody());
+    }
+
 
 }

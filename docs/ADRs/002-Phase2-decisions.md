@@ -82,9 +82,9 @@ Use **JWT (JSON Web Tokens)** for stateless authentication instead of OAuth2 or 
 
 ## P2.3 – Refresh Token & Logout
 
-**Date**: 27/01/2026
-**Commit**: `feat(refresh token) - Hybrid approach with stateful refresh tokens`
-**Status**: In progress
+**Date**: 28/01/2026
+**Commits**: `P2.3 - Implement refreshToken API with hybrid approach _ feat(auth)` and `P2.3 - Implement logout API _ feat(auth)`
+**Status**: Completed
 
 ### Decision
 Implement **Hybrid Token System**: stateless JWT access tokens (100h) + stateful refresh tokens (7d) stored in database. Enables token revocation while maintaining scalability.
@@ -116,8 +116,8 @@ Implement **Hybrid Token System**: stateless JWT access tokens (100h) + stateful
 - **`RefreshTokenService`**: Business logic for create, validate, revoke, cleanup.
 - **`AuthController`**:
   - `POST /api/auth/login`: Returns both access + refresh tokens; saves refresh to DB.
-  - `POST /api/auth/refresh`: Validates refresh token (JWT + DB + expiry + revoked), returns new access token.
-  - `POST /api/auth/logout`: Revokes refresh token in DB.
+  - `POST /api/auth/refresh`: Validates refresh token (JWT format + DB existence + not revoked + not expired), returns new access token (200), or 401 (invalid format/expired), or 400 (revoked/non-existing).
+  - `POST /api/auth/logout`: Validates refresh token, revokes in DB, returns success message + username (200), or 401 (invalid format), or 400 (already revoked/non-existing).
 - **`JwtTokenProvider`**: Extended to generate/validate refresh tokens with `"type":"refresh"` claim.
 - **DTOs**: `RefreshTokenRequestDTO`, `RefreshTokenResponseDTO`, updated `LoginResponseDTO`.
 - **Token structure**:
@@ -129,7 +129,7 @@ Implement **Hybrid Token System**: stateless JWT access tokens (100h) + stateful
   { "sub": "user@example.com", "type": "refresh", "iat": 1769511332, "exp": 1770116132 }
   ```
 
-### Testing
+  ### Testing
 - New tests added, all passing.
 - Coverage: JwtTokenProvider, RefreshTokenService, AuthController, DTOs, entity.
 - H2 in-memory DB for tests (see application-test.properties).
