@@ -1,7 +1,6 @@
 # MySpendingApp
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Kevindmm_MySpendingApp&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Kevindmm_MySpendingApp)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Kevindmm_MySpendingApp&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Kevindmm_MySpendingApp)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Kevindmm_MySpendingApp&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Kevindmm_MySpendingApp)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Kevindmm_MySpendingApp&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Kevindmm_MySpendingApp)
 
@@ -40,19 +39,19 @@ The goal is to create a clear and maintainable backend while showcasing modern J
 ---
 
 
-## 🚀 Development Roadmap
+## Development Roadmap
 
 | Phase                              | Purpose | Status |
 |------------------------------------|---------|--------|
-| Phase 0 – Setup                    | Skeleton, CI, Docker, health-check | ✅ Done |
-| Phase 1 – Data Model               | Finalise production-ready schema (users, categories, transactions) on SQLite/H2; seed demo data | ✅ Done |
-| Phase 2 – MVP (MySpendingApp CRUD) | Implement login + JWT and full spending CRUD on top of the mature DB | ✍️ In progress |
-| Phase 3 – Modernisation            | Replace legacy constructs with Java 17+ features; introduce records, sealed classes | ⬜ Planned |
-| Phase 4 – Enhancements             | FX API integration, dashboards, reporting, test-data tools | ⬜ Planned |
+| Phase 0 – Setup                    | Skeleton, CI, Docker, health-check | Done |
+| Phase 1 – Data Model               | Finalise production-ready schema (users, categories, transactions) on SQLite/H2; seed demo data | Done |
+| Phase 2 – MVP (MySpendingApp CRUD) | Implement login + JWT and full spending CRUD on top of the mature DB | In progress |
+| Phase 3 – Modernisation            | Replace legacy constructs with Java 17+ features; introduce records, sealed classes | Planned |
+| Phase 4 – Enhancements             | FX API integration, dashboards, reporting, test-data tools | Planned |
 
 
 
-### ✅ Phase 0 — Setup (Completed!)
+### Phase 0 — Setup (Completed!)
 *Goal: bring the project to life locally with CI, health-check, logging, and a working Docker stack.*
 
 - [x] **P0.1**  Spring Boot skeleton + Gradle build
@@ -63,7 +62,7 @@ The goal is to create a clear and maintainable backend while showcasing modern J
 
 
 
-### ✅ Phase 1 — Data Model (Completed!)
+### Phase 1 — Data Model (Completed!)
 *Goal: lock down a production-ready schema<—>users, categories, transactions and preload demo data so later phases can 
 focus on business logic and UI.*
 
@@ -80,12 +79,12 @@ focus on business logic and UI.*
 
 
 
-### ✍️ Phase 2 — MVP (MySpendingApp CRUD + JWT)
+### Phase 2 — MVP (MySpendingApp CRUD + JWT)
 *Goal: implement authentication, core spending CRUD, and quality gates on top of the existing `User`, `Category`, and `TransactionV2` entities from Phase 1.*
 
 - [x] **P2.1** SonarQube integration with GitHub Actions; add quality gate badge to README
 - [x] **P2.2** JWT authentication: `AuthController`, `JwtTokenProvider`, `JwtAuthenticationFilter`, `SecurityAuthConfig`; `POST /api/v1/auth/login` endpoint
-- [ ] **P2.3** `AuthController` implementation of refresh token and logout endpoints; extend `JwtTokenProvider` for refresh tokens; update `SecurityAuthConfig`
+- [ ] **P2.3** Refresh token implementation: `RefreshToken` entity, `RefreshTokenService`, `/api/auth/refresh` endpoint; hybrid approach (stateless access + stateful refresh); logout endpoint
 - [ ] **P2.4** `TransactionService` layer with `create`, `findAllByUser`, `update`, `delete` methods; DTOs: `TransactionRequest`, `TransactionResponse`, `CategoryResponse`
 - [ ] **P2.5** REST API for TransactionV2: `POST`, `GET`, `PUT`, `DELETE /api/v1/transactions`; JWT-secured endpoints with `@PreAuthorize`
 - [ ] **P2.6** `CategoryService` + REST API: `POST`, `GET`, `PUT`, `DELETE /api/v1/categories`; prevent deletion if transactions exist
@@ -94,14 +93,14 @@ focus on business logic and UI.*
 - And more...
 
 **Key Java 17 features used:**
-- Records for DTOs (`LoginRequest`, `TransactionRequest`, `TransactionResponse`)
+- Records for DTOs (`LoginRequest`, `LoginResponse`, `RefreshTokenRequest`, `RefreshTokenResponse`, `TransactionRequest`, `TransactionResponse`)
 - `Stream.toList()` for mapping/filtering
 - `var` in service methods
 - Switch expressions in validation logic
 
 
 
-### 🕓 Phase 3 — Modernization (planned) !!Needs clarification!!
+### Phase 3 — Modernization (planned) !!Needs clarification!!
 
 - Switch expressions & pattern matching in business logic
 - Sealed hierarchy for `SpendingType` (`INCOME` / `EXPENSE`)
@@ -110,7 +109,7 @@ focus on business logic and UI.*
 
 
 
-### 🕓 Phase 4 — Enhancements (planned) !!Needs clarification!!
+### Phase 4 — Enhancements (planned) !!Needs clarification!!
 - [ ] **P1.6** Update Conversion model to UUID PKs
 - Currency-rate integration & automatic conversion
 - [ ] **P1.5**  ImportBatch entity & FK from Transaction
@@ -136,18 +135,18 @@ This section contains all the information required for getting the app up and ru
 - [server/](server/) - the backend (Java 17 + Spring Boot 2.6.6)
 - [client/](client/) - the frontend (React)
 
-You can run the stack with Docker (recommended) or run server/client locally in separate terminals.
+**Note:** Docker is the recommended way to run the application. It ensures consistent environment and avoids Java version conflicts.
 
 ---
 
-### Docker (recommended)
+### Docker
 
 To run the stack with Docker, follow these steps:
 
 1. From the repo root, build and start the services:
 
 ```bash
-  docker compose up --build
+docker compose up --build
 ```
 
 2. Check the backend:
@@ -160,65 +159,18 @@ To run the stack with Docker, follow these steps:
 4. Stop everything:
 
 ```bash
-  docker compose down
+docker compose down
 ```
 
----
+#### Mac (Apple Silicon M1/M2/M3)
 
-### Server (local)
-
-To run the server locally (without Docker), follow these steps:
-
-1. Navigate to the server directory (`cd server`)
-
-2. Install/build dependencies:
-  - Unix/macOS: `./gradlew build`
-  - Windows: `.\gradlew build`
-
-3. Start the server (Tomcat on port 8080):
-  - Unix/macOS: `./gradlew bootRun`
-  - Windows: `.\gradlew bootRun`
-
----
-
-### Client (local)
-
-- System requirements
-  - NodeJS v18
-
-To run the client locally, follow these steps:
-
-1. Navigate to the client directory (`cd client`)
-
-2. Install dependencies:
+If you're on a Mac with Apple Silicon, use the Mac-specific compose file:
 
 ```bash
-  npm install
+docker compose -f docker-compose.mac.yml up --build
 ```
 
-You can ignore the severity vulnerabilities, this is a [known issue](https://github.com/facebook/create-react-app/issues/11174) related to `create-react-app` and not actual vulnerabilities for this setup.
-
-3. Start the client:
-
-```bash
-  npm start
-```
-
----
-
-## Formatting Client
-
-To format your code using [prettier](https://prettier.io/), follow these steps:
-
-1. Navigate to the client directory (`cd client`)
-
-2. Run this command:
-
-```bash
-  npm run lint
-```
-
-To ensure you are using the correct version of prettier, make sure to format your code after installing the dependencies (`npm install`).
+**Note:** The Mac compose file uses Ubuntu-based images (jammy) instead of Alpine for ARM64 compatibility.
 
 ---
 
@@ -241,7 +193,7 @@ Seed files live under `server/src/main/resources/`.
 📄 **[ADR-001: Phase 0 Setup & Phase 1 DB](docs/ADRs/001-Phase0_AND_Phase1-decisions.md)**  
 Captures setup and data model decisions (Docker, UUID PKs, test environments, seed strategy).
 
-📄 **[ADR-002: Phase 2 – MVP ✍️](docs/ADRs/002-Phase2-decisions.md)**
+📄 **[ADR-002: Phase 2 – MVP (In progress...)](docs/ADRs/002-Phase2-decisions.md)**
 Covers SonarQube integration and JWT vs OAuth2/session-based auth decision and more...
 
 ---
@@ -254,4 +206,3 @@ To verify that the frontend is working properly, go to [http://localhost:3000](h
 ![Starting Screen](docs/mySpendingApp.png)
 
 ---
-

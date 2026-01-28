@@ -1,0 +1,16 @@
+# Docker Compose for running tests locally on Mac (Apple Silicon compatible)
+# Usage: docker-compose -f docker-compose.test.yml up --build
+# Reports will be generated in: server/build/reports/
+
+services:
+  test:
+    image: gradle:8.6.0-jdk17-jammy  # Lightweight Ubuntu-based, compatible with Mac M1/M2
+    container_name: mySpendingApp-tests
+    working_dir: /workspace
+    volumes:
+      - ./server:/workspace  # Mount local code
+    command: ./gradlew test jacocoTestReport --no-daemon
+    environment:
+      - GRADLE_USER_HOME=/workspace/.gradle  # Cache Gradle dependencies
+
+# Made with Bob

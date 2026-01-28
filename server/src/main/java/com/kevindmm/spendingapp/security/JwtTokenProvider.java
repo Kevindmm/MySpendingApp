@@ -26,6 +26,9 @@ public class JwtTokenProvider {
     @Value("${jwt.expiration}")
     private long jwtExpirationInMs;
 
+    @Value("${jwt.refresh.expiration}")
+    private long jwtRefreshExpirationInMs;
+
     private SecretKey key;
 
     // Preventing the repeated creation of the key and enhancing performance
@@ -102,4 +105,61 @@ public class JwtTokenProvider {
 
         return false;
     }
+
+    //RefreshToken logic
+    //Generate refresh toekn with longer expiration
+    public String generateRefreshToken(String email){
+        if(email == null || email.isBlank()){
+            throw new IllegalArgumentException("Email cannot be null or blank");
+        }
+
+        if(key == null){
+            throw new IllegalStateException("JWT secret key is not initialized");
+        }
+
+        Instant now = Instant.now();
+        Date issuedDate = Date.from(now);
+        Date expiryDate = Date.from(now.plusMillis(jwtExpirationInMs));
+
+        return Jwts.builder()
+                    .claim(Claims.SUBJECT, email)
+                    .claim("type", "refresh") //Identify as refresh token
+                    .issuedAt(issuedDate)
+                    .expiration(expiryDate)
+                    .signWith(key)
+                    .compact();
+    }
+
+    //Validate refresh token
+    public boolean validateRefreshToken(String token){
+        if (token == null || token.isBlank()) {
+        return false;
+        }
+
+        try { 
+            Claims claims = Jwts.parser()
+                                .verifyWith(key)
+                                .build()
+                                .parseSignedClaims(token)
+                                .getPayload();
+            
+            //Verify it's a refresh token
+            String type = claims.get("type", String.class);
+            return "refresh".equals(type);
+
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+        logger.info("Refresh token expired: {}", e.getMessage());
+        } catch (io.jsonwebtoken.JwtException | IllegalArgumentException e) {
+            logger.warn("Invalid refresh token: {}", e.getMessage());
+        }
+
+    return false;
+    }
+
+    // Get email from refresh token
+    public String getEmailFromRefreshToken(String token) {
+        Claims claims = getClaimsFromJwtToken(token);
+        return claims.getSubject();
+    }
+
 }

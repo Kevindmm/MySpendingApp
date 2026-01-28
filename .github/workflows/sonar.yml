@@ -10,10 +10,7 @@ jobs:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
 
-    env:
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      SPRING_DATASOURCE_URL: jdbc:sqlite:data/mySpendingApp.db  # Override for CI relative path
-      SPENDINGAPP_DB_URL: jdbc:sqlite:data/mySpendingApp.db     # Override custom property for CI
+    # No env variables needed - tests use application-test.properties with H2
 
     steps:
       - uses: actions/checkout@v4

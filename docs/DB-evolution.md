@@ -1,10 +1,10 @@
 # Database Schema Evolution
 
-Tracks what changed, why, and how it impacts dev/test environments.
+This document tracks schema changes across project phases, documenting what changed, why, and how it impacts development and test environments.
 
 ---
 
-## 0️⃣ Initial Baseline (end of Phase 0)
+## Phase 0 – Initial Baseline
 
 **Schema**
 
@@ -17,7 +17,7 @@ No auth/ownership yet.
 
 ---
 
-## 1️⃣ Phase 1 – Model hardening (Users, Categories, TransactionsV2)
+## Phase 1 – Model Hardening (Users, Categories, TransactionsV2)
 
 ### P1.1 – Schema baseline documentation
 - **What**: Created this evolution log + ER diagram.
@@ -116,6 +116,39 @@ No auth/ownership yet.
 
 ---
 
+## Phase 2 – Authentication & Refresh Tokens
+
+### P2.2 – JWT Authentication
+- **What**: Implemented JWT-based authentication with access tokens.
+- **Components**: `AuthController`, `JwtTokenProvider`, `JwtAuthenticationFilter`, `SecurityAuthConfig`.
+- **Endpoint**: `POST /api/auth/login` returns JWT access token.
+- **Why**: Stateless authentication for API security.
+
+---
+
+### P2.3 – Refresh Token Implementation
+- **What**: Added `refresh_tokens` table for hybrid authentication approach.
+- **Columns**:
+  - `id (UUID PK)`
+  - `token (VARCHAR(500))` - JWT refresh token
+  - `user_id (FK → users, NOT NULL)`
+  - `expiry_date (TIMESTAMP)`
+  - `created_at (TIMESTAMP)`
+  - `revoked (BOOLEAN)` - for logout/blacklist functionality
+- **Relationships**: `@ManyToOne` to User.
+- **Service**: `RefreshTokenService` handles token lifecycle (create, verify, revoke).
+- **Endpoints**:
+  - `POST /api/auth/refresh` - validates refresh token, returns new access token
+  - `POST /api/auth/logout` - revokes refresh token (planned)
+- **Strategy**: Hybrid approach
+  - Access tokens: Stateless JWT (100 hours)
+  - Refresh tokens: Stateful, stored in DB (7 days)
+- **Why**:
+  - Enables real logout functionality through token revocation
+  - Maintains scalability (most requests use stateless access tokens)
+  - Provides security through shorter-lived access tokens
+
+---
 
 ## Environments
 
@@ -129,12 +162,13 @@ No auth/ownership yet.
 
 ---
 
-## Current ER snapshot (Phase 1, pre-MVP)
+## Current ER Snapshot (Phase 2)
 
 ```
 users (UUID PK)
   ├── categories (UUID PK, FK user_id, UK(user_id, name))
-  └── transactionsv2 (UUID PK, FK user_id, FK category_id) ← MVP
+  ├── transactionsv2 (UUID PK, FK user_id, FK category_id) ← MVP
+  └── refresh_tokens (UUID PK, FK user_id) ← Phase 2
 
 [DEPRECATED]
 transactions (LONG PK) — chart only, removed Phase 4
@@ -153,9 +187,10 @@ conversion (INT PK) — FX demo, removed Phase 4
 
 ---
 
-## Future changes (Phase 4+)
+## Future Changes (Phase 4+)
 
-- Chart migration to TransactionV2 API (Phase 4).
-- Remove legacy `transactions` + `conversion` tables (Phase 4).
-- Add indexes on `user_id`, `category_id`, `date`.
-- PostgreSQL migration plan.
+- Automatic cleanup job for expired refresh tokens
+- Chart migration to TransactionV2 API
+- Remove legacy `transactions` + `conversion` tables
+- Add indexes on `user_id`, `category_id`, `date`
+- PostgreSQL migration plan
