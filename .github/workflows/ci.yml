@@ -76,3 +76,4 @@ jobs:
       - name: Build frontend          #Run React build to check that it compiles correctly
         run: npm run build
         working-directory: client
+        

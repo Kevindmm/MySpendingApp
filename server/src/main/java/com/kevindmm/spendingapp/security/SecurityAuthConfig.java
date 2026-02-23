@@ -32,7 +32,8 @@ public class SecurityAuthConfig {
             .authorizeHttpRequests(
                     auth  -> auth
                         .antMatchers("/actuator/**").permitAll() // Allow unauthenticated access to actuator endpoints
-                        .antMatchers("/api/auth/**").permitAll() // Allow unauthenticated access to auth endpoints
+                        .antMatchers("/api/auth/login", "/api/auth/register", "/api/auth/refresh", "/api/auth/logout").permitAll() // Public auth endpoints
+                        .antMatchers("/api/auth/**").authenticated() // Protected auth endpoints (like /me, /change-password)
                         .antMatchers("/api/spendings").permitAll() // Allow unauthenticated access to spendings GET endpoint for Now...
                         .antMatchers("/api/test/**").authenticated() // for testing purposes
                         .anyRequest().authenticated() // All other requests require authentication

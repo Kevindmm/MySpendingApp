@@ -140,4 +140,38 @@ Implement **Hybrid Token System**: stateless JWT access tokens (100h) + stateful
 - HttpOnly cookies for refresh token storage (XSS mitigation).
 - Rate limiting for refresh endpoint.
 
+
+## P2.4 – Complete Auth Module
+
+**Date**: 23/02/2026
+**Commits**: `P2.4 - Implement register API _ feat(auth)`, `P2.4 - Implement /me and /change-password APIs _ feat(auth)`
+**Status**: Completed
+
+### Decision
+Complete authentication module with user registration, profile retrieval, and password management.
+
+### Why
+- **Self-service**: Users can register and manage passwords without admin intervention.
+- **Security**: Strong password validation, BCrypt encryption, current password verification.
+- **Completeness**: Essential user management features for MVP.
+
+### Implementation
+- **`POST /api/auth/register`**: User registration with email uniqueness check, password validation (min 8 chars, uppercase, lowercase, digit, special char). Returns 201 (Created), 409 (Conflict), 422 (Validation Error).
+- **`GET /api/auth/me`**: Returns user profile (ID, email, name, createdAt). Requires JWT authentication. Returns 200 (OK), 401 (Unauthorized).
+- **`PUT /api/auth/change-password`**: Changes password with current password verification and new password validation. Returns 200 (OK), 400 (Bad Request), 401 (Unauthorized).
+- **Security Config**: Updated `SecurityAuthConfig` and `JwtAuthenticationFilter` to protect `/me` and `/change-password` while keeping `/login`, `/register`, `/refresh`, `/logout` public.
+- **DTOs**: `RegisterRequestDTO`, `RegisterResponseDTO`, `UserProfileDTO`, `ChangePasswordRequestDTO`, `ChangePasswordResponseDTO`.
+
+### Testing
+- 12 new tests (4 register, 3 me, 5 change-password).
+- Total AuthController tests: 25.
+- 100% coverage of new endpoints.
+
+### Trade-offs
+- ✅ Full auth module with self-service features.
+- ✅ Strong security (password validation, BCrypt, JWT).
+- ⚠️ Email verification not implemented (future enhancement).
+- ⚠️ Password reset flow not implemented (future enhancement).
+
+---
 ---
