@@ -33,10 +33,10 @@ public class User {
     private  String name;
 
     @Column(name = "last_name" )
-    private String last_name;
+    private String lastName;
 
-    @Column(name = "password_hash", nullable = false, length = 64)
-    private String passwordHash; //BCrypt hash length (60 characters)
+    @Column(name = "password_hash", nullable = false, length = 72)
+    private String passwordHash; //BCrypt hash length (60 characters, 72 for future-proofing)
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -69,9 +69,9 @@ public class User {
     }
 
     public String getLastName() {
-        return last_name;
+        return lastName;
     }
-    public void setLastName(String last_name) {this.last_name = last_name;}
+    public void setLastName(String lastName) {this.lastName = lastName;}
 
     public Timestamp getCreatedAt() {return createdAt;}
 }

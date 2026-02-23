@@ -9,6 +9,8 @@ import javax.validation.Path.Node;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -51,5 +53,15 @@ public class RestExceptionHandler {
         String message = String.format("%s should be an %s", paramName, expectedTypeStr);
         ErrorResponse errorResponse = new ErrorResponse(message, paramName, "query");
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponseWrapper> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        List<ErrorResponse> errors = new ArrayList<ErrorResponse>();
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            errors.add(new ErrorResponse(error.getDefaultMessage(), error.getField(), "body"));
+        }
+        ErrorResponseWrapper toReturn = new ErrorResponseWrapper(errors);
+        return new ResponseEntity<ErrorResponseWrapper>(toReturn, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }

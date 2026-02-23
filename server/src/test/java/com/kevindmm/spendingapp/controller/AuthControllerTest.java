@@ -93,6 +93,7 @@ class AuthControllerTest {
         LoginResponseDTO response = responseEntity.getBody();
 
         assertEquals(401, responseEntity.getStatusCodeValue());
+        assertNotNull(response);
         assertNull(response.getToken());
         assertNull(response.getRefreshToken());
         assertNull(response.getUsername());
@@ -105,6 +106,7 @@ class AuthControllerTest {
         LoginResponseDTO response = responseEntity.getBody();
 
         assertEquals(401, responseEntity.getStatusCodeValue());
+        assertNotNull(response);
         assertNull(response.getToken());
         assertNull(response.getRefreshToken());
         assertNull(response.getUsername());
@@ -315,5 +317,136 @@ class AuthControllerTest {
         assertNull(responseEntity.getBody());
     }
 
+    // ==================== REGISTER TESTS ====================
 
+    @Test
+    void register_withValidData_returns201() throws Exception {
+        // Arrange
+        var request = new com.kevindmm.spendingapp.dto.RegisterRequestDTO(
+            "New User",
+            "newuser@example.com",
+            "SecurePass123!"
+        );
+        
+        Mockito.when(userRepository.findByEmail(request.email()))
+            .thenReturn(Optional.empty());
+        
+        Mockito.when(passwordEncoder.encode(request.password()))
+            .thenReturn("hashedPassword");
+        
+        User savedUser = new User();
+        // Need to set ID because controller uses savedUser.getId().toString()
+        java.lang.reflect.Field idField = User.class.getDeclaredField("id");
+        idField.setAccessible(true);
+        idField.set(savedUser, java.util.UUID.randomUUID());
+        
+        savedUser.setEmail(request.email());
+        savedUser.setName(request.name());
+        Mockito.when(userRepository.save(Mockito.any()))
+            .thenReturn(savedUser);
+        
+        // Act
+        ResponseEntity<com.kevindmm.spendingapp.dto.RegisterResponseDTO> response =
+            authController.register(request);
+        
+        // Assert
+        assertEquals(201, response.getStatusCodeValue());
+        assertNotNull(response.getBody());
+        var body = response.getBody();
+        assertNotNull(body);
+        assertEquals("User registered successfully", body.message());
+        assertNotNull(body.userId());
+    }
+
+    @Test
+    void register_withDuplicateEmail_returns409() {
+        // Arrange
+        var request = new com.kevindmm.spendingapp.dto.RegisterRequestDTO(
+            "User",
+            "existing@example.com",
+            "SecurePass123!"
+        );
+        
+        User existingUser = new User();
+        existingUser.setEmail(request.email());
+        Mockito.when(userRepository.findByEmail(request.email()))
+            .thenReturn(Optional.of(existingUser));
+        
+        // Act
+        ResponseEntity<com.kevindmm.spendingapp.dto.RegisterResponseDTO> response = 
+            authController.register(request);
+        
+        // Assert
+        assertEquals(409, response.getStatusCodeValue());
+        assertNotNull(response.getBody());
+        var body = response.getBody();
+        assertNotNull(body);
+        assertEquals("Email already exists", body.message());
+        assertNull(body.userId());
+    }
+
+    @Test
+    void register_withRepositoryException_returns500() {
+        // Arrange
+        var request = new com.kevindmm.spendingapp.dto.RegisterRequestDTO(
+            "User",
+            "newuser@example.com",
+            "SecurePass123!"
+        );
+        
+        Mockito.when(userRepository.findByEmail(request.email()))
+            .thenReturn(Optional.empty());
+        
+        Mockito.when(userRepository.save(Mockito.any()))
+            .thenThrow(new org.springframework.dao.DataAccessResourceFailureException("Database error"));
+        
+        Mockito.when(passwordEncoder.encode(request.password()))
+            .thenReturn("hashedPassword");
+        
+        // Act
+        ResponseEntity<com.kevindmm.spendingapp.dto.RegisterResponseDTO> response =
+            authController.register(request);
+        
+        // Assert
+        assertEquals(500, response.getStatusCodeValue());
+        assertNotNull(response.getBody());
+        var body = response.getBody();
+        assertNotNull(body);
+        assertEquals("Registration failed", body.message());
+        assertNull(body.userId());
+    }
+
+    @Test
+    void register_passwordIsEncoded() throws Exception {
+        // Arrange
+        var request = new com.kevindmm.spendingapp.dto.RegisterRequestDTO(
+            "User",
+            "newuser@example.com",
+            "PlainPassword123!"
+        );
+        
+        Mockito.when(userRepository.findByEmail(request.email()))
+            .thenReturn(Optional.empty());
+        
+        User savedUser = new User();
+        // Need to set ID because controller uses savedUser.getId().toString()
+        java.lang.reflect.Field idField = User.class.getDeclaredField("id");
+        idField.setAccessible(true);
+        idField.set(savedUser, java.util.UUID.randomUUID());
+        
+        Mockito.when(userRepository.save(Mockito.any()))
+            .thenReturn(savedUser);
+        
+        Mockito.when(passwordEncoder.encode(Mockito.anyString()))
+            .thenReturn("$2a$10$hashedPassword");
+        
+        // Act
+        authController.register(request);
+        
+        // Assert
+        Mockito.verify(passwordEncoder).encode(request.password());
+        Mockito.verify(userRepository).save(Mockito.argThat(user ->
+            user.getPasswordHash().equals("$2a$10$hashedPassword")
+        ));
+    }
 }
