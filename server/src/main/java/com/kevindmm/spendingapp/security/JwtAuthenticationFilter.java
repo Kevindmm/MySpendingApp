@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.micrometer.core.lang.NonNull;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,10 +34,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        // Skip JWT processing for permitAll endpoints like /actuator/** and /api/auth/**
-        if (request.getRequestURI().startsWith("/actuator/")
-                || request.getRequestURI().startsWith("/api/auth/")
-                || request.getRequestURI().startsWith("/api/spendings")) {
+        // Skip JWT processing for permitAll endpoints
+        String uri = request.getRequestURI();
+        if (uri.startsWith("/actuator/")
+                || uri.equals("/api/auth/login")
+                || uri.equals("/api/auth/register")
+                || uri.equals("/api/auth/refresh")
+                || uri.equals("/api/auth/logout")
+                || uri.startsWith("/api/spendings")) {
             filterChain.doFilter(request, response);
             return;
         }
