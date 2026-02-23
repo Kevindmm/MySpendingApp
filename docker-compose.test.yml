@@ -13,4 +13,3 @@ services:
     environment:
       - GRADLE_USER_HOME=/workspace/.gradle  # Cache Gradle dependencies
 
-# Made with Bob
