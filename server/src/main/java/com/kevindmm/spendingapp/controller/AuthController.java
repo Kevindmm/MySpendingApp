@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +23,6 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
-
 
 @RestController
 @RequestMapping("/api/auth")
@@ -35,7 +35,7 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
 
     public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder,
-         JwtTokenProvider jwtTokenProvider, RefreshTokenService refreshTokenService){
+            JwtTokenProvider jwtTokenProvider, RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -43,14 +43,15 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO){
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
         logger.info("Login attempt received");
 
         // Find user by email (using email as username)
         var userOptional = userRepository.findByEmail(loginRequestDTO.username());
 
         // Validate credentials
-        if(userOptional.isEmpty() || !passwordEncoder.matches(loginRequestDTO.password(), userOptional.get().getPasswordHash())){
+        if (userOptional.isEmpty()
+                || !passwordEncoder.matches(loginRequestDTO.password(), userOptional.get().getPasswordHash())) {
             logger.warn("Invalid login attempt - authentication failed");
             return ResponseEntity.status(401).body(new LoginResponseDTO(null, null, null));
         }
@@ -59,7 +60,7 @@ public class AuthController {
 
         // Generate access token
         String accessToken = jwtTokenProvider.generateJwtToken(user.getEmail());
-        
+
         // Create and save refresh token
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
@@ -68,34 +69,35 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<RefreshTokenResponseDTO> refreshToken (@Valid @RequestBody RefreshTokenRequestDTO refreshTokenRequestDTO) {
+    public ResponseEntity<RefreshTokenResponseDTO> refreshToken(
+            @Valid @RequestBody RefreshTokenRequestDTO refreshTokenRequestDTO) {
         String requestRefreshToken = refreshTokenRequestDTO.refreshToken();
-        
+
         try {
             // Validate token format
             if (!jwtTokenProvider.validateRefreshToken(requestRefreshToken)) {
                 logger.warn("Invalid refresh token format");
                 return ResponseEntity.status(401).body(null);
             }
-            
+
             // Find token in database (throws exception if not found)
             RefreshToken refreshToken = refreshTokenService.findByToken(requestRefreshToken);
-            
+
             // Check if revoked
             if (refreshToken.isRevoked()) {
                 logger.warn("Attempted to use revoked refresh token");
                 return ResponseEntity.status(400).body(null);
             }
-            
+
             // Verify expiration (throws exception if expired)
             refreshToken = refreshTokenService.verifyExpiration(refreshToken);
-            
+
             // Generate new access token
             String newAccessToken = jwtTokenProvider.generateJwtToken(refreshToken.getUser().getEmail());
-            
+
             logger.info("Access token refreshed successfully");
             return ResponseEntity.ok(new RefreshTokenResponseDTO(newAccessToken));
-            
+
         } catch (RuntimeException e) {
             logger.error("Error refreshing token: {}", e.getMessage(), e);
             return ResponseEntity.status(400).body(null);
@@ -103,28 +105,29 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<LogOutResponseDTO> logout(@Valid @RequestBody RefreshTokenRequestDTO requestDTO){
+    public ResponseEntity<LogOutResponseDTO> logout(@Valid @RequestBody RefreshTokenRequestDTO requestDTO) {
         String refreshToken = requestDTO.refreshToken();
 
-        try{
-            if(!jwtTokenProvider.validateRefreshToken(refreshToken)){
+        try {
+            if (!jwtTokenProvider.validateRefreshToken(refreshToken)) {
                 logger.warn("Invalid refresh token format.");
                 return ResponseEntity.status(401).body(null);
             }
 
             RefreshToken refreshTokenDB = refreshTokenService.findByToken(refreshToken);
 
-            if(refreshTokenDB.isRevoked()){
+            if (refreshTokenDB.isRevoked()) {
                 logger.warn("Attempted to use a revoked token");
                 return ResponseEntity.status(400).body(null);
             }
 
-            //Revoke the token
+            // Revoke the token
             refreshTokenService.revokeRefreshToken(refreshToken);
             logger.info("User {} logged out successfully", refreshTokenDB.getUser().getEmail());
-            return ResponseEntity.status(200).body(new LogOutResponseDTO("Logged out successfully.", refreshTokenDB.getUser().getEmail()));
+            return ResponseEntity.status(200)
+                    .body(new LogOutResponseDTO("Logged out successfully.", refreshTokenDB.getUser().getEmail()));
 
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             logger.error("Error logging out a user: {}", e.getMessage(), e);
             return ResponseEntity.status(400).body(null);
         }
@@ -133,13 +136,14 @@ public class AuthController {
     /**
      * Registers a new user in the system.
      *
-     * @param requestDTO the registration request containing email, password, and name
+     * @param requestDTO the registration request containing email, password, and
+     *                   name
      * @return ResponseEntity with RegisterResponseDTO containing:
      *         <ul>
-     *           <li>201 - User registered successfully</li>
-     *           <li>409 - Email already exists</li>
-     *           <li>422 - Validation errors</li>
-     *           <li>500 - Registration failed due to server error</li>
+     *         <li>201 - User registered successfully</li>
+     *         <li>409 - Email already exists</li>
+     *         <li>422 - Validation errors</li>
+     *         <li>500 - Registration failed due to server error</li>
      *         </ul>
      */
     @PostMapping("/register")
@@ -150,7 +154,7 @@ public class AuthController {
 
         try {
             var existingUser = userRepository.findByEmail(emailChecked);
-            if(existingUser.isPresent()){
+            if (existingUser.isPresent()) {
                 logger.warn("Registration failed - email already exists");
                 return ResponseEntity.status(409).body(new RegisterResponseDTO("Email already exists", null));
             }
@@ -164,8 +168,9 @@ public class AuthController {
 
             logger.info("User registered successfully");
 
-            return ResponseEntity.status(201).body(new RegisterResponseDTO("User registered successfully", savedUser.getId().toString()));
-        } catch(DataAccessException e) {
+            return ResponseEntity.status(201)
+                    .body(new RegisterResponseDTO("User registered successfully", savedUser.getId().toString()));
+        } catch (DataAccessException e) {
             logger.error("Registration failed: {}", e.getMessage());
             logger.debug("Registration failed with stack trace", e);
             return ResponseEntity.status(500).body(new RegisterResponseDTO("Registration failed", null));
@@ -178,17 +183,57 @@ public class AuthController {
 
         Optional<User> user = userRepository.findByEmail(email);
 
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             var userProfileDTO = new UserProfileDTO(
-                user.get().getId().toString(),
-                user.get().getEmail(),
-                user.get().getName(),
-                user.get().getLastName(),
-                user.get().getCreatedAt().toString()
-            );
+                    user.get().getId().toString(),
+                    user.get().getEmail(),
+                    user.get().getName(),
+                    user.get().getLastName(),
+                    user.get().getCreatedAt().toString());
             return ResponseEntity.ok(userProfileDTO);
         }
-        
+
         return ResponseEntity.status(401).build();
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<ChangePasswordResponseDTO> changePassword(
+            @Valid @RequestBody ChangePasswordRequestDTO requestDTO, Authentication authentication) {
+        logger.info("Attempting to change password for user");
+
+        try {
+            String email = authentication.getName();
+            Optional<User> userOpt = userRepository.findByEmail(email);
+            if (userOpt.isEmpty()) {
+                logger.warn("User not found: {}", email);
+                return ResponseEntity.status(401)
+                        .body(new ChangePasswordResponseDTO("User not found"));
+            }
+
+            User user = userOpt.get();
+
+            if (!passwordEncoder.matches(requestDTO.currentPassword(), user.getPasswordHash())) {
+                logger.warn("Current password is incorrect for user: {}", email);
+                return ResponseEntity.status(400)
+                        .body(new ChangePasswordResponseDTO("Current password is incorrect"));
+            }
+
+            if (passwordEncoder.matches(requestDTO.newPassword(), user.getPasswordHash())) {
+                logger.warn("New password is the same as current password");
+                return ResponseEntity.status(400)
+                        .body(new ChangePasswordResponseDTO("New password must be different from current password"));
+            }
+
+            user.setPasswordHash(passwordEncoder.encode(requestDTO.newPassword()));
+            userRepository.save(user);
+
+            logger.info("Password changed successfully for user: {}", email);
+            return ResponseEntity.ok(new ChangePasswordResponseDTO("Password changed successfully"));
+
+        } catch (DataAccessException e) {
+            logger.error("Failed to change password: {}", e.getMessage());
+            return ResponseEntity.status(500)
+                    .body(new ChangePasswordResponseDTO("Failed to change password"));
+        }
     }
 }
